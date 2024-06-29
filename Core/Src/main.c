@@ -92,6 +92,15 @@ int main(void)
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
 
+  __HAL_RCC_GPIOB_CLK_ENABLE();
+  GPIO_InitTypeDef ledGPIO;
+  ledGPIO.Mode = GPIO_MODE_OUTPUT_PP;
+  ledGPIO.Pin = GPIO_PIN_0;
+  ledGPIO.Pull = GPIO_NOPULL;
+  ledGPIO.Speed = GPIO_SPEED_HIGH;
+  HAL_GPIO_Init(GPIOB, &ledGPIO);
+
+
   const char *msg = "hello uart\r\n";
   HAL_UART_Transmit(&huart1, (uint8_t*)msg, strlen(msg), 128);
 
@@ -102,6 +111,11 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
+
+    HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_0);
+    HAL_Delay(300);
+    HAL_UART_Transmit(&huart1, (uint8_t*)msg, strlen(msg), 128);
+    HAL_Delay(300);
 
     /* USER CODE BEGIN 3 */
   }
