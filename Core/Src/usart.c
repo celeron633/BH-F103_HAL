@@ -21,7 +21,7 @@
 #include "usart.h"
 
 /* USER CODE BEGIN 0 */
-
+uint8_t uartRecvBuffer[8] = {0};
 /* USER CODE END 0 */
 
 UART_HandleTypeDef huart1;
@@ -51,6 +51,9 @@ void MX_USART1_UART_Init(void)
     Error_Handler();
   }
   /* USER CODE BEGIN USART1_Init 2 */
+
+  // 启用中断模式接收
+  HAL_UARTEx_ReceiveToIdle_IT(&huart1, uartRecvBuffer, sizeof(uartRecvBuffer));
 
   /* USER CODE END USART1_Init 2 */
 
@@ -118,5 +121,12 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef* uartHandle)
 }
 
 /* USER CODE BEGIN 1 */
+void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
+{
+  if (huart == &huart1) {
+    HAL_UART_Transmit(&huart1, uartRecvBuffer, Size, 128);
+    HAL_UARTEx_ReceiveToIdle_IT(&huart1, uartRecvBuffer, sizeof(uartRecvBuffer));
+  }
+}
 
 /* USER CODE END 1 */
