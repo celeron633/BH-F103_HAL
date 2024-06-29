@@ -1,0 +1,61 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug (OpenOCD DAP)",
+            "cwd": "${workspaceRoot}",
+            "executable": "${workspaceRoot}/build/Debug/STM32_HAL.elf",
+            "request": "launch",
+            "type": "cortex-debug",
+            "servertype": "openocd",
+            "interface": "swd",
+            "device": "STM32F103ZET6",
+            "runToEntryPoint": "main",
+            "svdFile": "${workspaceRoot}/stm32f103.svd",
+            
+            "configFiles": [
+                "interface/cmsis-dap.cfg",
+                "target/stm32f1x.cfg "
+            ],
+            
+            "preLaunchCommands": [
+                "set mem inaccessible-by-default off",
+                "monitor reset"
+            ],
+            "postLaunchCommands": [
+                "monitor reset init",
+                "monitor sleep 200"
+            ]
+        },
+        {
+            "name": "Debug (OpenOCD J-Link)",
+            "cwd": "${workspaceRoot}",
+            "executable": "${workspaceRoot}/build/Debug/STM32_HAL.elf",
+            "request": "launch",
+            "type": "cortex-debug",
+            "servertype": "openocd",
+            "interface": "swd",
+            "device": "STM32F103ZET6",
+            "runToEntryPoint": "main",
+            "svdFile": "${workspaceRoot}/stm32f103.svd",
+            
+            "configFiles": [
+                "interface/jlink.cfg",
+                "target/stm32f1x.cfg "
+            ],
+            
+            "preLaunchCommands": [
+                "set mem inaccessible-by-default off",
+                "monitor reset"
+            ],
+            "postLaunchCommands": [
+                "monitor reset init",
+                "monitor sleep 200"
+            ],
+            "showDevDebugOutput": "raw"
+        }
+    ]
+}
