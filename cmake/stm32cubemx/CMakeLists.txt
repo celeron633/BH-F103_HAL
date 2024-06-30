@@ -21,6 +21,7 @@ target_include_directories(stm32cubemx INTERFACE
 )
 
 target_sources(stm32cubemx INTERFACE
+    ../../Core/Src/fonts.c
     ../../Core/Src/ili9341.c
     ../../Core/Src/main.c
     ../../Core/Src/gpio.c
