@@ -26,6 +26,7 @@
 /* USER CODE BEGIN Includes */
 
 #include <stdio.h>
+#include <string.h>
 #include "ili9341.h"
 
 /* USER CODE END Includes */
@@ -109,7 +110,9 @@ int main(void)
   ili9341Init();
   ili9341ReadID();
 
-  ili9341ShowChar(0, 0, 'D');
+  // ili9341ShowChar(0, 0, 'D');
+  ili9341ShowString(0, 0, "hello world", strlen("hello world"));
+  ili9341ShowString(0, 0, "hello ili9341", strlen("hello world"));
 
   /* USER CODE END 2 */
 

@@ -326,6 +326,12 @@ void ili9341ShowChar(uint16_t x, uint16_t y, char c)
     uint16_t chrOffset = c - ' ';
     // 每个字符多少个bytes
     uint8_t fontLength = (LCD_Currentfonts->Width * LCD_Currentfonts->Height) / 8;
+
+    // 防止越界
+    // if ((chrOffset * fontLength) > (sizeof(LCD_Currentfonts->table)/sizeof(LCD_Currentfonts->table[0])) {
+    //     return;
+    // }
+
     // 得到目标字符的偏移
     const uint8_t *pFont = &(LCD_Currentfonts->table[chrOffset * fontLength]);
 
@@ -346,6 +352,24 @@ void ili9341ShowChar(uint16_t x, uint16_t y, char c)
 
 void ili9341ShowString(uint16_t x, uint16_t y, const char* str, size_t len)
 {
+    (void)len;
+
+    while (*str) {
+        if ((x - ILI9341_DispWindow_X_Star + LCD_Currentfonts->Width) > LCD_X_LENGTH) {
+                // 换行
+                y += LCD_Currentfonts->Height;
+                x = ILI9341_DispWindow_X_Star;
+            }
+
+            if ((y - ILI9341_DispWindow_Y_Star + LCD_Currentfonts->Height) > LCD_Y_LENGTH) {
+                // 横向写满了, 重新回到第一行第一列
+                y = ILI9341_DispWindow_Y_Star;
+                x = ILI9341_DispWindow_X_Star;
+            }
+            ili9341ShowChar(x, y, *str);
+            x += LCD_Currentfonts->Width;
+        str++;
+    }
 
 }
 
