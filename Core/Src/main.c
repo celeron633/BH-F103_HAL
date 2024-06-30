@@ -25,6 +25,8 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
+#include <stdio.h>
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -34,7 +36,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-
+extern UART_HandleTypeDef huart1;
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -56,7 +58,11 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+int __io_putchar(int ch)
+{
+  HAL_UART_Transmit(&huart1, (uint8_t*)&ch, 1, 16);
+  return 0;
+}
 /* USER CODE END 0 */
 
 /**
@@ -91,6 +97,13 @@ int main(void)
   MX_USART1_UART_Init();
   MX_FSMC_Init();
   /* USER CODE BEGIN 2 */
+
+  // 串口测试
+  printf("hello world\r\n");
+  // 拉高9341的复位
+  HAL_GPIO_WritePin(GPIOG, GPIO_LCD_RST_Pin, GPIO_PIN_SET);
+  // 开启LCD屏幕的背光
+  HAL_GPIO_WritePin(GPIOG, GPIO_LCD_BL_Pin, GPIO_PIN_RESET);
 
   /* USER CODE END 2 */
 
