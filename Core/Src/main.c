@@ -111,8 +111,11 @@ int main(void)
   ili9341ReadID();
 
   // ili9341ShowChar(0, 0, 'D');
-  ili9341ShowString(0, 0, "hello world", strlen("hello world"));
-  ili9341ShowString(0, 0, "hello ili9341", strlen("hello world"));
+  // ili9341ShowString(0, 0, "hello world");
+  // ili9341ShowString(0, 0, "hello ili9341");
+
+  ili9341AutoShowString("hello world\n");
+  ili9341AutoShowString("hello lcd\n");
 
   /* USER CODE END 2 */
 

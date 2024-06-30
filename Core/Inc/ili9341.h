@@ -72,6 +72,8 @@ void ili9341OpenWindow(uint16_t x, uint16_t y, uint16_t width, uint16_t height);
 // 显示字符
 void ili9341ShowChar(uint16_t x, uint16_t y, char c);
 // 显示字符串
-void ili9341ShowString(uint16_t x, uint16_t y, const char* str, size_t len);
+void ili9341ShowString(uint16_t x, uint16_t y, const char* str);
+// 自动换行显示字符串
+void ili9341AutoShowString(const char* str);
 
 #endif

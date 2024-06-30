@@ -350,10 +350,8 @@ void ili9341ShowChar(uint16_t x, uint16_t y, char c)
     }
 }
 
-void ili9341ShowString(uint16_t x, uint16_t y, const char* str, size_t len)
+void ili9341ShowString(uint16_t x, uint16_t y, const char* str)
 {
-    (void)len;
-
     while (*str) {
         if ((x - ILI9341_DispWindow_X_Star + LCD_Currentfonts->Width) > LCD_X_LENGTH) {
                 // 换行
@@ -370,6 +368,36 @@ void ili9341ShowString(uint16_t x, uint16_t y, const char* str, size_t len)
             x += LCD_Currentfonts->Width;
         str++;
     }
+}
 
+void ili9341AutoShowString(const char* str)
+{
+    static uint16_t currentX  = 0;
+    static uint16_t currentY  = 0;
+
+    while (*str) {
+        if (*str == '\n') {
+            // 换行
+            currentY += LCD_Currentfonts->Height;
+            currentX = ILI9341_DispWindow_X_Star;
+            str++;
+            continue;
+        }
+
+        if ((currentX - ILI9341_DispWindow_X_Star + LCD_Currentfonts->Width) > LCD_X_LENGTH) {
+                // 换行
+                currentY += LCD_Currentfonts->Height;
+                currentX = ILI9341_DispWindow_X_Star;
+            }
+
+            if ((currentY - ILI9341_DispWindow_Y_Star + LCD_Currentfonts->Height) > LCD_Y_LENGTH) {
+                // 横向写满了, 重新回到第一行第一列
+                currentY = ILI9341_DispWindow_Y_Star;
+                currentX = ILI9341_DispWindow_X_Star;
+            }
+            ili9341ShowChar(currentX, currentY, *str);
+            currentX += LCD_Currentfonts->Width;
+        str++;
+    }
 }
 
