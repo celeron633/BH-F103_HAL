@@ -26,9 +26,14 @@ static void     ili9341WriteData(uint16_t d);
 // 读数据
 static uint16_t ili9341ReadData(void);
 
+// 背光控制
+void backlightControl(FunctionalState state);
+
 // 9341复位
 void ili9341Reset();
 // 9341初始化, 初始化前先完成GPIO FSMC的初始化
 void ili9341Init();
+// 读取芯片ID
+uint16_t ili9341ReadID();
 
 #endif

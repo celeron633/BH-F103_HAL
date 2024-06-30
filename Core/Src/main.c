@@ -26,6 +26,7 @@
 /* USER CODE BEGIN Includes */
 
 #include <stdio.h>
+#include "ili9341.h"
 
 /* USER CODE END Includes */
 
@@ -104,6 +105,9 @@ int main(void)
   HAL_GPIO_WritePin(GPIOG, GPIO_LCD_RST_Pin, GPIO_PIN_SET);
   // 开启LCD屏幕的背光
   HAL_GPIO_WritePin(GPIOG, GPIO_LCD_BL_Pin, GPIO_PIN_RESET);
+
+  ili9341Init();
+  ili9341ReadID();
 
   /* USER CODE END 2 */
 
