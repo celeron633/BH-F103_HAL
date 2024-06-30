@@ -11,6 +11,8 @@
 
 #include "fsmc.h"
 
+#include "fonts.h"
+
 // 屏幕实际型号是ST7789V, 没有对ILI9341做兼容, 实际在设置Gram和初始化屏幕主控寄存器时有差异
 
 /* 定义 ILI934 常用命令 */
@@ -66,5 +68,10 @@ void ili9341Init();
 uint16_t ili9341ReadID();
 // 打开窗口
 void ili9341OpenWindow(uint16_t x, uint16_t y, uint16_t width, uint16_t height);
+
+// 显示字符
+void ili9341ShowChar(uint16_t x, uint16_t y, char c);
+// 显示字符串
+void ili9341ShowString(uint16_t x, uint16_t y, const char* str, size_t len);
 
 #endif

@@ -109,6 +109,8 @@ int main(void)
   ili9341Init();
   ili9341ReadID();
 
+  ili9341ShowChar(0, 0, 'D');
+
   /* USER CODE END 2 */
 
   /* Infinite loop */

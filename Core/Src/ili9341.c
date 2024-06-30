@@ -2,6 +2,11 @@
 
 #include <stdio.h>
 
+// 英文字体
+static sFONT    *LCD_Currentfonts   = &Font8x16;
+static uint16_t CurrentTextColor    = RED; // 前景色
+static uint16_t CurrentBackColor    = BLACK; // 背景色
+
 // 调用ILI9341_GramScan函数设置方向时会自动更改
 uint16_t LCD_X_LENGTH = ILI9341_LESS_PIXEL;
 uint16_t LCD_Y_LENGTH = ILI9341_MORE_PIXEL;
@@ -312,7 +317,35 @@ void ili9341Init()
     ili9341GramScan(LCD_SCAN_MODE);
     // 设置为纯色
     ili9341OpenWindow(0, 0, LCD_X_LENGTH, LCD_Y_LENGTH);
-    ili9341FillColor(LCD_X_LENGTH*LCD_Y_LENGTH, GREEN);
+    ili9341FillColor(LCD_X_LENGTH*LCD_Y_LENGTH, BLACK);
 }
 
+void ili9341ShowChar(uint16_t x, uint16_t y, char c)
+{
+    // 当前字符相对于空格的偏移
+    uint16_t chrOffset = c - ' ';
+    // 每个字符多少个bytes
+    uint8_t fontLength = (LCD_Currentfonts->Width * LCD_Currentfonts->Height) / 8;
+    // 得到目标字符的偏移
+    const uint8_t *pFont = &(LCD_Currentfonts->table[chrOffset * fontLength]);
+
+    // 每个字符打开一个窗口
+    ili9341OpenWindow(x, y, LCD_Currentfonts->Width, LCD_Currentfonts->Height);
+    ili9341WriteCommand(CMD_SetPixel);
+
+    for (uint8_t byteCount = 0; byteCount < fontLength; byteCount++) {
+        for (uint8_t bitCount = 0; bitCount < 8; bitCount++) {
+            if (pFont[byteCount] & (0x80 >> bitCount)) {
+                ili9341WriteData(CurrentTextColor);
+            } else {
+                ili9341WriteData(CurrentBackColor);
+            }
+        }
+    }
+}
+
+void ili9341ShowString(uint16_t x, uint16_t y, const char* str, size_t len)
+{
+
+}
 
