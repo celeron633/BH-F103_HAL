@@ -18,6 +18,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "tim.h"
 #include "usart.h"
 #include "gpio.h"
 
@@ -58,6 +59,8 @@ void SystemClock_Config(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
+uint64_t timCount = 0;
+
 /* USER CODE END 0 */
 
 /**
@@ -90,7 +93,11 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_USART1_UART_Init();
+  MX_TIM6_Init();
   /* USER CODE BEGIN 2 */
+
+
+  HAL_TIM_Base_Start_IT(&htim6);
 
   __HAL_RCC_GPIOB_CLK_ENABLE();
   GPIO_InitTypeDef ledGPIO;
@@ -111,9 +118,6 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-
-    HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_0);
-    HAL_Delay(500);
 
     /* USER CODE BEGIN 3 */
   }
