@@ -21,11 +21,14 @@
 #include "tim.h"
 #include "usart.h"
 #include "gpio.h"
+#include "delay.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
+#include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
 /* USER CODE END Includes */
 
@@ -97,7 +100,9 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
 
-  HAL_TIM_Base_Start_IT(&htim6);
+  // HAL_TIM_Base_Start_IT(&htim6);
+  // 启动定时器, 不使用产生中断
+  HAL_TIM_Base_Start(&htim6);
 
   __HAL_RCC_GPIOB_CLK_ENABLE();
   GPIO_InitTypeDef ledGPIO;
@@ -107,9 +112,12 @@ int main(void)
   ledGPIO.Speed = GPIO_SPEED_HIGH;
   HAL_GPIO_Init(GPIOB, &ledGPIO);
 
+  // const char *msg = "hello uart\r\n";
+  // HAL_UART_Transmit(&huart1, (uint8_t*)msg, strlen(msg), 128);
 
-  const char *msg = "hello uart\r\n";
-  HAL_UART_Transmit(&huart1, (uint8_t*)msg, strlen(msg), 128);
+  char buf[128] = {0};
+  sprintf(buf, "SystemCoreClock is [%ld] Hz\n", SystemCoreClock);
+  HAL_UART_Transmit(&huart1, buf, strlen(buf), HAL_MAX_DELAY);
 
   /* USER CODE END 2 */
 
@@ -118,6 +126,8 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
+    HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_0);
+    tim_delay_us(50000);
 
     /* USER CODE BEGIN 3 */
   }
