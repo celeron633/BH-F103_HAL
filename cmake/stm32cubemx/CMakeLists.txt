@@ -21,6 +21,7 @@ target_include_directories(stm32cubemx INTERFACE
 )
 
 target_sources(stm32cubemx INTERFACE
+    ../../Core/Src/dht11.c
     ../../Core/Src/delay.c
     ../../Core/Src/main.c
     ../../Core/Src/gpio.c
