@@ -39,52 +39,44 @@ void dht11Init()
 
 int dht11Check()
 {
+    int retryCnt = 0;
+
     // 切换到输入模式
     dht11DataIn();
     // 先会被DHT11拉低80us左右, 再会被DHT11拉高80us
-    int retryCnt = 0;
-    // 等待被拉低
-    while (HAL_GPIO_ReadPin(DHT11_DATA_GPIO, DHT11_DATA_PORT) == GPIO_PIN_SET) {
+    // 等待被拉高
+    while (HAL_GPIO_ReadPin(DHT11_DATA_GPIO, DHT11_DATA_PORT) == GPIO_PIN_RESET) {
         retryCnt++;
-        tim_delay_us(10);
+        tim_delay_us(1);
         // 超时了
-        if (retryCnt >= 5) {
+        if (retryCnt >= 100) {
             return -1;
         }
     }
     retryCount1 = retryCnt;
     retryCnt = 0;
-    // 等待被拉高
-    while (HAL_GPIO_ReadPin(DHT11_DATA_GPIO, DHT11_DATA_PORT) == GPIO_PIN_RESET) {
-        retryCnt++;
-        tim_delay_us(10);
-        // 超时了
-        if (retryCnt >= 12) {
-            return -1;
-        }
-    }
-    retryCount2 = retryCnt;
-    retryCnt = 0;
 
     // 等待再次被拉低
     while (HAL_GPIO_ReadPin(DHT11_DATA_GPIO, DHT11_DATA_PORT) == GPIO_PIN_SET) {
         retryCnt++;
-        tim_delay_us(10);
-        if (retryCnt >= 12) {
+        tim_delay_us(1);
+        if (retryCnt >= 100) {
             return -1;
         }
     }
-    retryCount3 = retryCnt;
+    retryCount2 = retryCnt;
     // 后面DHT11开始返回温度数据了
+
+    return 0;
 }
 
 void dht11Reset()
 {
     // 切换到输出模式
     dht11DataOut();
-    // 先拉低18毫秒
+    // 先拉低20毫秒
     HAL_GPIO_WritePin(DHT11_DATA_GPIO, DHT11_DATA_PORT, GPIO_PIN_RESET);
-    HAL_Delay(18);
+    HAL_Delay(20);
     // 再拉高30us, 等待DHT11响应
     HAL_GPIO_WritePin(DHT11_DATA_GPIO, DHT11_DATA_PORT, GPIO_PIN_SET);
     tim_delay_us(30);
@@ -93,20 +85,24 @@ void dht11Reset()
 uint8_t dht11ReadBit(void)
 {
     uint8_t bit = 0;
-    // 等待拉高
-    while (HAL_GPIO_ReadPin(DHT11_DATA_GPIO, DHT11_DATA_PORT) == GPIO_PIN_RESET) {
-
+    uint32_t retry = 0;
+    // 等待被拉低(上次要是比特1, 高电平可能持续比较久)
+    while (HAL_GPIO_ReadPin(DHT11_DATA_GPIO, DHT11_DATA_PORT) == GPIO_PIN_SET && retry < 100) {
+        tim_delay_us(1);
+        retry++;
     }
-    tim_delay_us(40);
-    // 拉高后40us检查
+    retry = 0;
+    //  等待被拉高
+    while (HAL_GPIO_ReadPin(DHT11_DATA_GPIO, DHT11_DATA_PORT) == GPIO_PIN_RESET && retry < 100) {
+        tim_delay_us(1);
+        retry++;
+    }
+    tim_delay_us(30);
+    // 拉高后30us检查
     if (HAL_GPIO_ReadPin(DHT11_DATA_GPIO, DHT11_DATA_PORT) == GPIO_PIN_RESET) {
         bit = 1;
     } else {
         bit = 0;
-    }
-    // 再次等待到高电平结束, 为读取下个bit做好准备
-    while (HAL_GPIO_ReadPin(DHT11_DATA_GPIO, DHT11_DATA_PORT) == GPIO_PIN_SET) {
-
     }
 
     return bit;
@@ -115,12 +111,10 @@ uint8_t dht11ReadBit(void)
 uint8_t dht11ReadByte(void)
 {
     uint8_t data = 0;
-    uint8_t tmp = 0;
 
     for (uint8_t i = 0; i < 8; i++) {
-        tmp = dht11ReadBit();
         data = data << 1;
-        data = data | tmp;
+        data = data | dht11ReadBit();
         // DHT11先传输高位, 再传输地位从MSB到LSB传输
     }
     
@@ -130,7 +124,7 @@ uint8_t dht11ReadByte(void)
 int dht11ReadData(uint8_t *temp, uint8_t *humi)
 {
     // 复位后, dht11会返回5个字节40个bit的数据
-    static uint8_t data[5] = {0x00};
+    uint8_t data[5] = {0x00};
     // 先复位
     dht11Reset();
     // 检查复位情况
