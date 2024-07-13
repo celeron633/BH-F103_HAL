@@ -7,6 +7,6 @@
 
 #include <stdint.h>
 
-void tim_delay_us(uint32_t us);
+void tim_delay_us(uint32_t time);
 
 #endif

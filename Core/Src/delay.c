@@ -3,20 +3,13 @@
 
 #include <stdint.h>
 
-void tim_delay_us(uint32_t us)
+extern TIM_HandleTypeDef htim6;
+
+void tim_delay_us(uint32_t time)
 {
-    /*
-    TIM6->CNT = 0;
-    while (TIM6->CNT < us)
+    __HAL_TIM_SET_COUNTER(&htim6, 0);
+    while (__HAL_TIM_GET_COUNTER(&htim6) < time)
     {
         
     }
-    */
-
-   volatile uint32_t curVal = TIM6->CNT;
-   while (TIM6->CNT - curVal < us)
-   {
-    
-   }
-   
 }

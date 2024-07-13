@@ -30,6 +30,8 @@
 #include <string.h>
 #include <stdlib.h>
 
+#include "dht11.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -63,6 +65,8 @@ void SystemClock_Config(void);
 /* USER CODE BEGIN 0 */
 
 uint64_t timCount = 0;
+extern int retryCount1;
+extern int retryCount2;
 
 /* USER CODE END 0 */
 
@@ -117,7 +121,13 @@ int main(void)
 
   char buf[128] = {0};
   sprintf(buf, "SystemCoreClock is [%ld] Hz\n", SystemCoreClock);
-  HAL_UART_Transmit(&huart1, buf, strlen(buf), HAL_MAX_DELAY);
+  HAL_UART_Transmit(&huart1, (uint8_t*)buf, strlen(buf), HAL_MAX_DELAY);
+
+  dht11Init();
+  dht11Reset();
+
+  sprintf(buf, "retryCount1 is [%d], retryCount2 is [%d]\r\n", retryCount1, retryCount2);
+  HAL_UART_Transmit(&huart1, (uint8_t*)buf, strlen(buf), HAL_MAX_DELAY);
 
   /* USER CODE END 2 */
 
