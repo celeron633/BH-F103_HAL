@@ -16,7 +16,14 @@
 // 初始化
 void dht11Init();
 // DHT11复位, 返回0成功, -1失败
-int  dht11Reset();
-int  dht11ReadData();
+void dht11Reset();
+// 检查DHT11复位的情况
+int dht11Check();
+// 读取一个bit
+uint8_t dht11ReadBit(void);
+// 读取一个字节
+uint8_t dht11ReadByte(void);
+// 读取温度数据
+int dht11ReadData(uint8_t *temp, uint8_t *humi);
 
 #endif

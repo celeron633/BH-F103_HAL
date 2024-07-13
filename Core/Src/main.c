@@ -67,6 +67,13 @@ void SystemClock_Config(void);
 uint64_t timCount = 0;
 extern int retryCount1;
 extern int retryCount2;
+extern int retryCount3;
+
+int __io_putchar(int ch)
+{
+  HAL_UART_Transmit(&huart1, (uint8_t*)&ch, 1, HAL_MAX_DELAY);
+  return 0;
+}
 
 /* USER CODE END 0 */
 
@@ -119,15 +126,22 @@ int main(void)
   // const char *msg = "hello uart\r\n";
   // HAL_UART_Transmit(&huart1, (uint8_t*)msg, strlen(msg), 128);
 
-  char buf[128] = {0};
-  sprintf(buf, "SystemCoreClock is [%ld] Hz\n", SystemCoreClock);
-  HAL_UART_Transmit(&huart1, (uint8_t*)buf, strlen(buf), HAL_MAX_DELAY);
+  printf("SystemCoreClock is [%ld] Hz\n", SystemCoreClock);
 
+  static uint8_t temp = 0, humi = 0;
   dht11Init();
-  dht11Reset();
 
-  sprintf(buf, "retryCount1 is [%d], retryCount2 is [%d]\r\n", retryCount1, retryCount2);
-  HAL_UART_Transmit(&huart1, (uint8_t*)buf, strlen(buf), HAL_MAX_DELAY);
+  // dht11ReadData(&temp, &humi);
+  HAL_Delay(800);
+  dht11Reset();
+  printf("retryCount1 is [%d*10]us, retryCount2 is [%d*10]us, retryCount3 is [%d*5]us\r\n", retryCount1, retryCount2, retryCount3);
+
+  HAL_Delay(800);
+  printf("delay fin\r\n");
+
+  dht11ReadData(&temp, &humi);
+  printf("retryCount1 is [%d*10]us, retryCount2 is [%d*10]us, retryCount3 is [%d*5]us\r\n", retryCount1, retryCount2, retryCount3);
+
 
   /* USER CODE END 2 */
 
@@ -137,7 +151,8 @@ int main(void)
   {
     /* USER CODE END WHILE */
     HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_0);
-    tim_delay_us(50000);
+    HAL_Delay(1000);
+    dht11ReadData(&temp, &humi);
 
     /* USER CODE BEGIN 3 */
   }
