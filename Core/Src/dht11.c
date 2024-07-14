@@ -6,6 +6,9 @@
 
 extern TIM_HandleTypeDef htim6;
 
+uint8_t bits[64] = {0};
+uint8_t bitsOffset = 0;
+
 int retryCount1 = 0;
 int retryCount2 = 0;
 int retryCount3 = 0;
@@ -100,10 +103,12 @@ uint8_t dht11ReadBit(void)
     tim_delay_us(30);
     // 拉高后30us检查
     if (HAL_GPIO_ReadPin(DHT11_DATA_GPIO, DHT11_DATA_PORT) == GPIO_PIN_RESET) {
-        bit = 1;
-    } else {
         bit = 0;
+    } else {
+        bit = 1;
     }
+    bits[bitsOffset] = bit;
+    bitsOffset++;
 
     return bit;
 }
@@ -121,7 +126,7 @@ uint8_t dht11ReadByte(void)
     return data;
 }
 
-int dht11ReadData(uint8_t *temp, uint8_t *humi)
+int dht11ReadData(uint8_t *tempPart1, uint8_t *tempPart2, uint8_t *humi)
 {
     // 复位后, dht11会返回5个字节40个bit的数据
     uint8_t data[5] = {0x00};
@@ -151,6 +156,13 @@ int dht11ReadData(uint8_t *temp, uint8_t *humi)
         chkSum += data[i];
     }
     printf("chkSum: %x\r\n", chkSum);
+    if (chkSum != data[4]) {
+        printf("dht11 checksum error!");
+        return -1;
+    }
+    *humi = data[0];
+    *tempPart1 = data[2];
+    *tempPart2 = data[3];
 
     // 处理温度, 湿度数据
 

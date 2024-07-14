@@ -69,6 +69,9 @@ extern int retryCount1;
 extern int retryCount2;
 extern int retryCount3;
 
+extern uint8_t bits[64];
+extern uint8_t bitsOffset;
+
 int __io_putchar(int ch)
 {
   HAL_UART_Transmit(&huart1, (uint8_t*)&ch, 1, HAL_MAX_DELAY);
@@ -128,7 +131,10 @@ int main(void)
 
   printf("SystemCoreClock is [%ld] Hz\n", SystemCoreClock);
 
-  static uint8_t temp = 0, humi = 0;
+  uint8_t temp1 = 0;
+  uint8_t temp2 = 0;
+  uint8_t humi = 0;
+  int ret = 0;
   dht11Init();
 
   // dht11ReadData(&temp, &humi);
@@ -139,9 +145,14 @@ int main(void)
   HAL_Delay(800);
   printf("delay fin\r\n");
 
-  dht11ReadData(&temp, &humi);
-  printf("retryCount1 is [%d*10]us, retryCount2 is [%d*10]us, retryCount3 is [%d*5]us\r\n", retryCount1, retryCount2, retryCount3);
+  dht11ReadData(&temp1, &temp2, &humi);
+  printf("retryCount1 is [%d]us, retryCount2 is [%d]us, retryCount3 is [%d]us\r\n", retryCount1, retryCount2, retryCount3);
 
+  printf("bitsOffset: [%d]\r\n", bitsOffset);
+  for (int i = 0; i < bitsOffset;  i++) {
+    printf("%d", bits[i]);
+  }
+  printf("\r\n");
 
   /* USER CODE END 2 */
 
@@ -152,7 +163,11 @@ int main(void)
     /* USER CODE END WHILE */
     HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_0);
     HAL_Delay(1000);
-    dht11ReadData(&temp, &humi);
+    ret = dht11ReadData(&temp1, &temp2, &humi);
+
+    if (ret >= 0) {
+      printf("humidity is [%d], temperature is [%d.%d]", humi, temp1, temp2);
+    }
 
     /* USER CODE BEGIN 3 */
   }

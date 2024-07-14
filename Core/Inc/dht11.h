@@ -24,6 +24,6 @@ uint8_t dht11ReadBit(void);
 // 读取一个字节
 uint8_t dht11ReadByte(void);
 // 读取温度数据
-int dht11ReadData(uint8_t *temp, uint8_t *humi);
+int dht11ReadData(uint8_t *tempPart1, uint8_t *tempPart2,uint8_t *humi);
 
 #endif
