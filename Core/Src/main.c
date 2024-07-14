@@ -67,7 +67,6 @@ void SystemClock_Config(void);
 uint64_t timCount = 0;
 extern int retryCount1;
 extern int retryCount2;
-extern int retryCount3;
 
 extern uint8_t bits[64];
 extern uint8_t bitsOffset;
@@ -140,13 +139,12 @@ int main(void)
   // dht11ReadData(&temp, &humi);
   HAL_Delay(800);
   dht11Reset();
-  printf("retryCount1 is [%d*10]us, retryCount2 is [%d*10]us, retryCount3 is [%d*5]us\r\n", retryCount1, retryCount2, retryCount3);
 
   HAL_Delay(800);
   printf("delay fin\r\n");
 
   dht11ReadData(&temp1, &temp2, &humi);
-  printf("retryCount1 is [%d]us, retryCount2 is [%d]us, retryCount3 is [%d]us\r\n", retryCount1, retryCount2, retryCount3);
+  printf("retryCount1 is [%d]us, retryCount2 is [%d]us\r\n", retryCount1, retryCount2);
 
   printf("bitsOffset: [%d]\r\n", bitsOffset);
   for (int i = 0; i < bitsOffset;  i++) {
@@ -166,7 +164,7 @@ int main(void)
     ret = dht11ReadData(&temp1, &temp2, &humi);
 
     if (ret >= 0) {
-      printf("humidity is [%d], temperature is [%d.%d]", humi, temp1, temp2);
+      printf("humidity is [%d], temperature is [%d.%d]\r\n", humi, temp1, temp2);
     }
 
     /* USER CODE BEGIN 3 */

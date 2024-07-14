@@ -11,7 +11,6 @@ uint8_t bitsOffset = 0;
 
 int retryCount1 = 0;
 int retryCount2 = 0;
-int retryCount3 = 0;
 
 static inline void dht11DataIn()
 {
@@ -144,18 +143,20 @@ int dht11ReadData(uint8_t *tempPart1, uint8_t *tempPart2, uint8_t *humi)
     }
 
 
+    /*
     printf("==data begin==\r\n");
     for (int i = 0; i < 5; i++) {
         printf("0x%x\r\n", data[i]);
     }
     printf("==data end==\r\n");
+    */
 
     // 计算校验和
     uint8_t chkSum = 0;
     for (int i = 0; i < 4; i++) {
         chkSum += data[i];
     }
-    printf("chkSum: %x\r\n", chkSum);
+    // printf("chkSum: %x\r\n", chkSum);
     if (chkSum != data[4]) {
         printf("dht11 checksum error!");
         return -1;
