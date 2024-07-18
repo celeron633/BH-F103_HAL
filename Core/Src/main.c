@@ -25,6 +25,7 @@
 /* USER CODE BEGIN Includes */
 
 #include <string.h>
+#include <stdio.h>
 
 /* USER CODE END Includes */
 
@@ -57,6 +58,12 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+
+int __io_putchar(int ch)
+{
+  HAL_UART_Transmit(&huart1, (uint8_t*)&ch, 1, HAL_MAX_DELAY);
+  return 0;
+}
 
 /* USER CODE END 0 */
 
@@ -101,8 +108,7 @@ int main(void)
   HAL_GPIO_Init(GPIOB, &ledGPIO);
 
 
-  const char *msg = "hello uart\r\n";
-  HAL_UART_Transmit(&huart1, (uint8_t*)msg, strlen(msg), 128);
+  printf("hello world\r\n");
 
   /* USER CODE END 2 */
 
