@@ -112,6 +112,13 @@ int main(void)
 
   printf("hello world\r\n");
 
+  // ADC校正
+  if (HAL_ADCEx_Calibration_Start(&hadc1) == HAL_ERROR) {
+    printf("ADC calibrate failed\r\n");
+  } else {
+    printf("ADC calibrate success!\r\n");
+  }
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
