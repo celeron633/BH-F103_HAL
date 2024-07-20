@@ -19,6 +19,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "adc.h"
+#include "spi.h"
 #include "usart.h"
 #include "gpio.h"
 
@@ -27,6 +28,8 @@
 
 #include <string.h>
 #include <stdio.h>
+
+#include "max7219.h"
 
 /* USER CODE END Includes */
 
@@ -99,6 +102,7 @@ int main(void)
   MX_GPIO_Init();
   MX_USART1_UART_Init();
   MX_ADC1_Init();
+  MX_SPI1_Init();
   /* USER CODE BEGIN 2 */
 
   __HAL_RCC_GPIOB_CLK_ENABLE();
@@ -112,12 +116,18 @@ int main(void)
 
   printf("hello world\r\n");
 
+  max7219Init(0xff);
+
+  led_printf("%s", "1.2345678");
+
   // ADC校正
   if (HAL_ADCEx_Calibration_Start(&hadc1) == HAL_ERROR) {
     printf("ADC calibrate failed\r\n");
   } else {
     printf("ADC calibrate success!\r\n");
   }
+
+
 
   /* USER CODE END 2 */
 
@@ -126,7 +136,8 @@ int main(void)
   while (1)
   {
     // HAL_ADC_Start_IT(&hadc1);
-    printf("begin adc convert\r\n");
+    
+    /* printf("begin adc convert\r\n");
 
     HAL_ADC_Start(&hadc1);
     HAL_ADC_PollForConversion(&hadc1, 100);
@@ -140,7 +151,7 @@ int main(void)
     } else {
       printf("adc convert failed\r\n");
     }
-    printf("end adc convert\r\n");
+    printf("end adc convert\r\n"); */
 
     HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_0);
     HAL_Delay(1000);
