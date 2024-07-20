@@ -119,8 +119,12 @@ void led_printf(const char *fmt, ...)
                 j++;
                 i++;
             }
+        } else if (ch == '.') {
+            led_buf[j] = (0x80);
+            j++;
+            i++;
         } else {
-            i+=1;
+            i++;
         }
     }
 
@@ -129,7 +133,14 @@ void led_printf(const char *fmt, ...)
     }
 }
 
+void led_raw_print(uint8_t data[8])
+{
+    for (int i = 0; i < MAX7219_DISPLAY_NUM; i++) {
+        max7219Write(i+1, data[i]);
+    }
+}
+
 int isLedPrintable(char ch)
 {
-    
+
 }

@@ -118,7 +118,7 @@ int main(void)
 
   max7219Init(0xff);
 
-  led_printf("%s", "1.2345678");
+  led_printf("%s", ".....");
 
   // ADC校正
   if (HAL_ADCEx_Calibration_Start(&hadc1) == HAL_ERROR) {

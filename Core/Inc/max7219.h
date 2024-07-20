@@ -45,6 +45,8 @@ void max7219Write(uint8_t regAddr, uint8_t regData);
 // 清屏
 void max7219Clear(void);
 
+void led_raw_print(uint8_t data[8]);
+
 void led_printf(const char *fmt, ...);
 
 int isLedPrintable(char ch);
