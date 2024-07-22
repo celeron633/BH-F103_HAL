@@ -113,6 +113,13 @@ int main(void)
   ledGPIO.Speed = GPIO_SPEED_HIGH;
   HAL_GPIO_Init(GPIOB, &ledGPIO);
 
+  ledGPIO.Pin = GPIO_PIN_5;
+  HAL_GPIO_Init(GPIOB, &ledGPIO);
+  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);
+
+  ledGPIO.Pin = GPIO_PIN_1;
+  HAL_GPIO_Init(GPIOB, &ledGPIO);
+  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_SET);
 
   printf("hello world\r\n");
 
@@ -126,8 +133,6 @@ int main(void)
   } else {
     printf("ADC calibrate success!\r\n");
   }
-
-
 
   /* USER CODE END 2 */
 
