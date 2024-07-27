@@ -142,5 +142,5 @@ void led_raw_print(uint8_t data[8])
 
 int isLedPrintable(char ch)
 {
-
+    return 0;
 }

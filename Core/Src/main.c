@@ -69,6 +69,8 @@ int __io_putchar(int ch)
   return 0;
 }
 
+uint32_t count = 0;
+
 /* USER CODE END 0 */
 
 /**
@@ -125,8 +127,6 @@ int main(void)
 
   max7219Init(0xff);
 
-  led_printf("%s", ".....");
-
   // ADC校正
   if (HAL_ADCEx_Calibration_Start(&hadc1) == HAL_ERROR) {
     printf("ADC calibrate failed\r\n");
@@ -141,6 +141,7 @@ int main(void)
   while (1)
   {
     // HAL_ADC_Start_IT(&hadc1);
+    static int localCount = 0;
     
     /* printf("begin adc convert\r\n");
 
@@ -158,8 +159,14 @@ int main(void)
     }
     printf("end adc convert\r\n"); */
 
-    HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_0);
-    HAL_Delay(1000);
+    // HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_0);
+
+    if (localCount != count) {
+      led_printf("%08d", count);
+      localCount = count;
+    };
+
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

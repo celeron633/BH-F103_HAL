@@ -43,6 +43,8 @@
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN PV */
 
+extern uint32_t count;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -201,22 +203,6 @@ void SysTick_Handler(void)
 /******************************************************************************/
 
 /**
-  * @brief This function handles EXTI line0 interrupt.
-  */
-void EXTI0_IRQHandler(void)
-{
-  /* USER CODE BEGIN EXTI0_IRQn 0 */
-  printf("EXTI0!\r\n");
-  
-  HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_5);
-  /* USER CODE END EXTI0_IRQn 0 */
-  HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_0);
-  /* USER CODE BEGIN EXTI0_IRQn 1 */
-
-  /* USER CODE END EXTI0_IRQn 1 */
-}
-
-/**
   * @brief This function handles ADC1 and ADC2 global interrupts.
   */
 void ADC1_2_IRQHandler(void)
@@ -250,10 +236,34 @@ void USART1_IRQHandler(void)
 void EXTI15_10_IRQHandler(void)
 {
   /* USER CODE BEGIN EXTI15_10_IRQn 0 */
-  printf("EXTI15_10!\r\n");
-  HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_1);
+  int dtPinState;
+  int clkPinState;
+  dtPinState = HAL_GPIO_ReadPin(ENC_PIN_DT_GPIO_Port, ENC_PIN_DT_Pin);
+  clkPinState = HAL_GPIO_ReadPin(ENC_PIN_CLK_GPIO_Port, ENC_PIN_CLK_Pin);
+
+  static int trunDirection;
+
+  // CLK为低电平时, 下降触发
+  if (clkPinState == GPIO_PIN_RESET) {
+    if (dtPinState == GPIO_PIN_SET) {
+      // 顺时针
+      trunDirection = 1;
+    } else {
+      // 逆时针
+      trunDirection = 2;
+    }
+  } else if (clkPinState == GPIO_PIN_SET) { // 上升触发
+    if (dtPinState == GPIO_PIN_RESET && trunDirection == 1) {
+      count++;
+    }
+
+    if (dtPinState == GPIO_PIN_SET && trunDirection == 2) {
+      count--;
+    }
+  }
+
   /* USER CODE END EXTI15_10_IRQn 0 */
-  HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_13);
+  HAL_GPIO_EXTI_IRQHandler(ENC_PIN_CLK_Pin);
   /* USER CODE BEGIN EXTI15_10_IRQn 1 */
 
   /* USER CODE END EXTI15_10_IRQn 1 */
