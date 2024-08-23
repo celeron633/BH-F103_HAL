@@ -1,5 +1,5 @@
 **/Objects/*
 **/Listings/*
 **/build/*
-*.uvguix.*
-.vscode/settings.json
+**/*.uvguix.*
+**/.vscode/settings.json
