@@ -57,6 +57,9 @@ void PendSV_Handler(void);
 void SysTick_Handler(void);
 /* USER CODE BEGIN EFP */
 
+// implement weak function
+void USART1_IRQHandler(void);
+
 /* USER CODE END EFP */
 
 #ifdef __cplusplus

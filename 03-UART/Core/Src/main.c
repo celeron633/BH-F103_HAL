@@ -25,8 +25,6 @@
 
 #include "uart.h"
 
-extern UART_HandleTypeDef uart1Handle;
-
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -57,6 +55,10 @@ extern UART_HandleTypeDef uart1Handle;
 /* USER CODE BEGIN PV */
 uint32_t ledColorArray[] = {LED_R, LED_G, LED_B};
 static uint8_t ledColorIndex = 0;
+
+extern UART_HandleTypeDef uart1Handle;
+uint8_t uartRecvBuf[256];
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -106,9 +108,16 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  char buf[] = "hello world\r\n";
+  char buf[] = "hello UART\r\n";
   HAL_UART_Transmit(&uart1Handle, (uint8_t *)buf, sizeof(buf), HAL_MAX_DELAY);
   __HAL_RCC_GPIOB_CLK_ENABLE();
+
+  // recv data from UART in interrupt mode
+  HAL_UART_Receive_IT(&uart1Handle, uartRecvBuf, 16);
+
+  // enable NVIC interrupt handle for USART1
+  HAL_NVIC_SetPriority(USART1_IRQn, 5, 0);
+  HAL_NVIC_EnableIRQ(USART1_IRQn);
 
   while (1)
   {

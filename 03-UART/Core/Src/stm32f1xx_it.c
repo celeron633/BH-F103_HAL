@@ -58,6 +58,9 @@
 
 /* USER CODE BEGIN EV */
 
+extern UART_HandleTypeDef uart1Handle;
+extern uint8_t uartRecvBuf[256];
+
 /* USER CODE END EV */
 
 /******************************************************************************/
@@ -199,5 +202,8 @@ void SysTick_Handler(void)
 /******************************************************************************/
 
 /* USER CODE BEGIN 1 */
-
+void USART1_IRQHandler(void)
+{
+  HAL_UART_IRQHandler(&uart1Handle);
+}
 /* USER CODE END 1 */

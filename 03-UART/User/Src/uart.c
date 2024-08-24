@@ -1,5 +1,7 @@
 #include "uart.h"
 
+#include <stdio.h>
+
 UART_HandleTypeDef uart1Handle;
 
 // UART peripheral init 
@@ -44,4 +46,9 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart)
         // UART1 RX
         HAL_GPIO_Init(GPIOA, &uartGPIO);
     }
+}
+
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+{
+    printf("RxCpltCallback\r\n");
 }
