@@ -97,6 +97,8 @@ int main(void)
   MX_GPIO_Init();
   /* USER CODE BEGIN 2 */
 
+  GPIOB->ODR = LED_R;
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
