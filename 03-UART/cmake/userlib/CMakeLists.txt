@@ -1,34 +1,35 @@
 cmake_minimum_required(VERSION 3.22)
 
-project(user)
-add_library(user INTERFACE)
+project(userlib)
+add_library(userlib INTERFACE)
 
 # Enable CMake support for ASM and C languages
 enable_language(C ASM)
 
-target_compile_definitions(user INTERFACE 
+target_compile_definitions(userlib INTERFACE 
 	USE_HAL_DRIVER 
 	STM32F103xE
     $<$<CONFIG:Debug>:DEBUG>
 )
 
-target_include_directories(user INTERFACE
+target_include_directories(userlib INTERFACE
     ../../Core/Inc
     ../../Drivers/STM32F1xx_HAL_Driver/Inc
     ../../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy
     ../../Drivers/CMSIS/Device/ST/STM32F1xx/Include
     ../../Drivers/CMSIS/Include
+    ../../User/Inc
 )
 
-target_sources(user INTERFACE
-    ../../Core/Src/uart.c
+target_sources(userlib INTERFACE
     ../../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_uart.c
+    ../../User/Src/uart.c
 )
 
-target_link_directories(user INTERFACE
+target_link_directories(userlib INTERFACE
 )
 
-target_link_libraries(user INTERFACE
+target_link_libraries(userlib INTERFACE
 )
 
 # Validate that STM32CubeMX code is compatible with C standard

@@ -4,6 +4,6 @@
 #include "main.h"
 #include "stm32f1xx_hal_uart.h"
 
-void InitBoardUART(void);
+HAL_StatusTypeDef InitBoardUART(void);
 
 #endif

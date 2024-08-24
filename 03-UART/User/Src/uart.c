@@ -2,7 +2,8 @@
 
 UART_HandleTypeDef uart1Handle;
 
-void InitBoardUART(void)
+// UART peripheral init 
+HAL_StatusTypeDef InitBoardUART(void)
 {
     // 1. enable clock
     __HAL_RCC_USART1_CLK_ENABLE();
@@ -24,6 +25,7 @@ void InitBoardUART(void)
     HAL_UART_Init(&uart1Handle);
 }
 
+// low-level GPIO init
 void HAL_UART_MspInit(UART_HandleTypeDef *huart)
 {
     __HAL_RCC_GPIOA_CLK_ENABLE();
