@@ -15,6 +15,9 @@
   *
   ******************************************************************************
   */
+#ifndef HAL_UART_MODULE_ENABLED
+#define HAL_UART_MODULE_ENABLED
+#endif
 /* USER CODE END Header */
 
 /* Define to prevent recursive inclusion -------------------------------------*/

@@ -22,6 +22,7 @@ target_include_directories(user INTERFACE
 
 target_sources(user INTERFACE
     ../../Core/Src/uart.c
+    ../../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_uart.c
 )
 
 target_link_directories(user INTERFACE

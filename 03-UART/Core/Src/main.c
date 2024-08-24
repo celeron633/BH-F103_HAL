@@ -25,6 +25,8 @@
 
 #include "uart.h"
 
+extern UART_HandleTypeDef uart1Handle;
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -104,19 +106,23 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  char buf[] = "hello world\r\n";
+  HAL_UART_Transmit(&uart1Handle, (uint8_t *)buf, sizeof(buf), HAL_MAX_DELAY);
+  __HAL_RCC_GPIOB_CLK_ENABLE();
+
   while (1)
   {
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-    /*
+    
     GPIOB->ODR = LED_R;
     HAL_Delay(500);
     GPIOB->ODR = LED_G;
     HAL_Delay(500);
     GPIOB->ODR = LED_B;
     HAL_Delay(500);
-    */
+  
 
   }
   /* USER CODE END 3 */

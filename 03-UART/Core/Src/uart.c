@@ -26,6 +26,8 @@ void InitBoardUART(void)
 
 void HAL_UART_MspInit(UART_HandleTypeDef *huart)
 {
+    __HAL_RCC_GPIOA_CLK_ENABLE();
+
     if (huart->Instance == USART1) {
         GPIO_InitTypeDef uartGPIO;
         uartGPIO.Mode = GPIO_MODE_AF_PP;
