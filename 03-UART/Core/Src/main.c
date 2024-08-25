@@ -23,6 +23,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
+#include <stdio.h>
 #include "uart.h"
 
 /* USER CODE END Includes */
@@ -108,8 +109,14 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  char buf[] = "hello UART\r\n";
+  
+  puts("hello UARTx!");
+  printf("hello UARTy!\r\n");
+
+  char buf[] = "hello UART2!\r\n";
   HAL_UART_Transmit(&uart1Handle, (uint8_t *)buf, sizeof(buf), HAL_MAX_DELAY);
+
+
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   // recv data from UART in interrupt mode
@@ -177,7 +184,11 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
-
+int __io_putchar(int ch)
+{
+    HAL_UART_Transmit(&uart1Handle, (uint8_t *)&ch, 1, HAL_MAX_DELAY);
+    return 0;
+}
 /* USER CODE END 4 */
 
 /**

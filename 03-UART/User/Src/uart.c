@@ -24,7 +24,7 @@ HAL_StatusTypeDef InitBoardUART(void)
     uart1Handle.Init = uart1Init;
     uart1Handle.Instance = USART1;
     
-    HAL_UART_Init(&uart1Handle);
+    return HAL_UART_Init(&uart1Handle);
 }
 
 // low-level GPIO init
@@ -50,5 +50,7 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart)
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
+    UNUSED(huart);
+
     printf("RxCpltCallback\r\n");
 }
