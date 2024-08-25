@@ -22,6 +22,7 @@
 #include "stm32f1xx_it.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include <stdio.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -202,8 +203,21 @@ void SysTick_Handler(void)
 /******************************************************************************/
 
 /* USER CODE BEGIN 1 */
+extern DMA_HandleTypeDef uart1RxDMAHandle;
+extern DMA_HandleTypeDef uart1TxDMAHandle;
+
 void USART1_IRQHandler(void)
 {
   HAL_UART_IRQHandler(&uart1Handle);
+}
+
+void DMA1_Channel5_IRQHandler(void)
+{
+  printf("DMA1_Channel5_IRQHandler\r\n");
+}
+
+void DMA1_Channel4_IRQHandler(void)
+{
+  HAL_DMA_IRQHandler(&uart1TxDMAHandle);
 }
 /* USER CODE END 1 */

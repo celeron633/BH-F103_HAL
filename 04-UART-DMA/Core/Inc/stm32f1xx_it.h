@@ -59,7 +59,8 @@ void SysTick_Handler(void);
 
 // implement weak function
 void USART1_IRQHandler(void);
-
+void DMA1_Channel5_IRQHandler(void);
+void DMA1_Channel4_IRQHandler(void);
 /* USER CODE END EFP */
 
 #ifdef __cplusplus

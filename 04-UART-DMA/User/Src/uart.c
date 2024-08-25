@@ -7,6 +7,9 @@ UART_HandleTypeDef uart1Handle;
 extern DMA_HandleTypeDef uart1RxDMAHandle;
 extern DMA_HandleTypeDef uart1TxDMAHandle;
 
+// our recv buffer
+extern uint8_t uartRecvBuf[256];
+
 // UART peripheral init 
 HAL_StatusTypeDef InitBoardUART(void)
 {
@@ -60,4 +63,12 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
     UNUSED(huart);
 
     printf("RxCpltCallback\r\n");
+}
+
+void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
+{
+    if (huart == &uart1Handle) {
+        // printf("got %d bytes from uart1! will send back!\r\n", Size);
+        HAL_UART_Transmit(&uart1Handle, uartRecvBuf, Size, HAL_MAX_DELAY);
+    }
 }

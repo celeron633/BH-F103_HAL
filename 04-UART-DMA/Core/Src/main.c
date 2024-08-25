@@ -59,6 +59,7 @@ uint32_t ledColorArray[] = {LED_R, LED_G, LED_B};
 // static uint8_t ledColorIndex = 0;
 
 extern UART_HandleTypeDef uart1Handle;
+extern DMA_HandleTypeDef uart1RxDMAHandle;
 uint8_t uartRecvBuf[256];
 
 /* USER CODE END PV */
@@ -122,19 +123,31 @@ int main(void)
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   // recv data from UART in interrupt mode
-  HAL_UART_Receive_IT(&uart1Handle, uartRecvBuf, 16);
+  // HAL_UART_Receive_IT(&uart1Handle, uartRecvBuf, 16);
 
   // enable NVIC interrupt handle for USART1
   HAL_NVIC_SetPriority(USART1_IRQn, 5, 0);
   HAL_NVIC_EnableIRQ(USART1_IRQn);
 
-  // enable NVIC interrupt handle for DMA1
+  // enable NVIC interrupt handle for DMA1 rx
   HAL_NVIC_SetPriority(DMA1_Channel5_IRQn, 4, 0);
   HAL_NVIC_EnableIRQ(DMA1_Channel5_IRQn);
+
+  // enable NVIC interrupt handle for DMA1 tx
+  HAL_NVIC_SetPriority(DMA1_Channel4_IRQn, 4, 0);
+  HAL_NVIC_EnableIRQ(DMA1_Channel4_IRQn);
 
   // dma tx test
   char buf[] = "hello world DMA\r\n";
   HAL_UART_Transmit_DMA(&uart1Handle, (uint8_t *)buf, sizeof(buf));
+
+  HAL_Delay(10);
+  // dma rx
+  // HAL_UART_Receive_DMA(&uart1Handle, (uint8_t*)uartRecvBuf, sizeof(uartRecvBuf));
+  // start rx DMA
+  HAL_UARTEx_ReceiveToIdle_DMA(&uart1Handle, (uint8_t*)uartRecvBuf, sizeof(uartRecvBuf));
+  // disable DMA half-complete interrupt
+  __HAL_DMA_DISABLE_IT(&uart1RxDMAHandle, DMA_IT_HT);
 
   while (1)
   {

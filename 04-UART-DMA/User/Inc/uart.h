@@ -7,4 +7,6 @@
 HAL_StatusTypeDef InitBoardUART(void);
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart);
 
+void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size);
+
 #endif

@@ -1,5 +1,7 @@
 #include "my_dma.h"
 
+extern UART_HandleTypeDef uart1Handle;
+
 DMA_HandleTypeDef uart1RxDMAHandle;
 DMA_HandleTypeDef uart1TxDMAHandle;
 
@@ -33,6 +35,7 @@ HAL_StatusTypeDef InitUART1RxDMA(void)
     uart1RxDMAHandle.DmaBaseAddress = DMA1;
     uart1RxDMAHandle.Init = rxDMAInitType;
     uart1RxDMAHandle.Instance = DMA1_Channel5;
+    uart1RxDMAHandle.Parent = &uart1Handle;
     return HAL_DMA_Init(&uart1RxDMAHandle);
 }
 
@@ -51,5 +54,6 @@ HAL_StatusTypeDef InitUART1TxDMA(void)
     uart1TxDMAHandle.DmaBaseAddress = DMA1;
     uart1TxDMAHandle.Init = txDMAInitType;
     uart1TxDMAHandle.Instance = DMA1_Channel4;
+    uart1TxDMAHandle.Parent = &uart1Handle;
     return HAL_DMA_Init(&uart1TxDMAHandle);
 }
