@@ -5,6 +5,9 @@ DMA_HandleTypeDef uart1TxDMAHandle;
 
 HAL_StatusTypeDef InitUART1DMA(void)
 {
+    // enable the clock for DMA1
+    __HAL_RCC_DMA1_CLK_ENABLE();
+
     HAL_StatusTypeDef rxRet = InitUART1RxDMA();
     HAL_StatusTypeDef txRet = InitUART1TxDMA();
 
@@ -47,6 +50,6 @@ HAL_StatusTypeDef InitUART1TxDMA(void)
     uart1TxDMAHandle.ChannelIndex = 4;
     uart1TxDMAHandle.DmaBaseAddress = DMA1;
     uart1TxDMAHandle.Init = txDMAInitType;
-    uart1TxDMAHandle.Instance = DMA1_Channel5;
+    uart1TxDMAHandle.Instance = DMA1_Channel4;
     return HAL_DMA_Init(&uart1TxDMAHandle);
 }

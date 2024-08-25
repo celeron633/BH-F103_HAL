@@ -4,6 +4,9 @@
 
 UART_HandleTypeDef uart1Handle;
 
+extern DMA_HandleTypeDef uart1RxDMAHandle;
+extern DMA_HandleTypeDef uart1TxDMAHandle;
+
 // UART peripheral init 
 HAL_StatusTypeDef InitBoardUART(void)
 {
@@ -23,6 +26,10 @@ HAL_StatusTypeDef InitBoardUART(void)
     
     uart1Handle.Init = uart1Init;
     uart1Handle.Instance = USART1;
+
+    // DMA
+    uart1Handle.hdmarx = &uart1RxDMAHandle;
+    uart1Handle.hdmatx = &uart1TxDMAHandle;
     
     return HAL_UART_Init(&uart1Handle);
 }

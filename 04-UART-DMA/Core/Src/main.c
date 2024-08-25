@@ -25,6 +25,7 @@
 
 #include <stdio.h>
 #include "uart.h"
+#include "my_dma.h"
 
 /* USER CODE END Includes */
 
@@ -55,7 +56,7 @@
 
 /* USER CODE BEGIN PV */
 uint32_t ledColorArray[] = {LED_R, LED_G, LED_B};
-static uint8_t ledColorIndex = 0;
+// static uint8_t ledColorIndex = 0;
 
 extern UART_HandleTypeDef uart1Handle;
 uint8_t uartRecvBuf[256];
@@ -104,6 +105,7 @@ int main(void)
   MX_GPIO_Init();
   /* USER CODE BEGIN 2 */
   
+  HAL_StatusTypeDef dmaInitStat = InitUART1DMA();
   InitBoardUART();
   /* USER CODE END 2 */
 
@@ -111,6 +113,11 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   
   puts("hello UARTx!");
+  if (dmaInitStat == HAL_OK) {
+    printf("DMA init success!\r\n");
+  } else {
+    printf("DMA init failed!\r\n");
+  }
 
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
@@ -120,6 +127,14 @@ int main(void)
   // enable NVIC interrupt handle for USART1
   HAL_NVIC_SetPriority(USART1_IRQn, 5, 0);
   HAL_NVIC_EnableIRQ(USART1_IRQn);
+
+  // enable NVIC interrupt handle for DMA1
+  HAL_NVIC_SetPriority(DMA1_Channel5_IRQn, 4, 0);
+  HAL_NVIC_EnableIRQ(DMA1_Channel5_IRQn);
+
+  // dma tx test
+  char buf[] = "hello world DMA\r\n";
+  HAL_UART_Transmit_DMA(&uart1Handle, (uint8_t *)buf, sizeof(buf));
 
   while (1)
   {
