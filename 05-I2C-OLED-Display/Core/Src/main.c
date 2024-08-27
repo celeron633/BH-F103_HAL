@@ -18,6 +18,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "i2c.h"
 #include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
@@ -26,6 +27,7 @@
 #include <stdio.h>
 #include "uart.h"
 #include "my_dma.h"
+#include "oled.h"
 
 /* USER CODE END Includes */
 
@@ -104,10 +106,23 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
   
+  // UART1 and DMA
   HAL_StatusTypeDef dmaInitStat = InitUART1DMA();
   InitBoardUART();
+
+  // OLED
+  // 0x78: oled i2c address
+  configOledDisplay(&hi2c1, 0x78);
+
+  if (initOledDisplay() < 0) {
+    printf("init oled screen failed!\r\n");
+  } else {
+    puts("oled ok!");
+  }
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
