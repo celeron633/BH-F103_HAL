@@ -63,6 +63,7 @@ uint32_t ledColorArray[] = {LED_R, LED_G, LED_B};
 extern UART_HandleTypeDef uart1Handle;
 extern DMA_HandleTypeDef uart1RxDMAHandle;
 uint8_t uartRecvBuf[256];
+uint32_t count = 0;
 
 /* USER CODE END PV */
 
@@ -115,9 +116,9 @@ int main(void)
 
   // OLED
   // 0x78: oled i2c address
-  configOledDisplay(&hi2c1, 0x78);
+  oledConfigDisplay(&hi2c1, 0x78);
 
-  if (initOledDisplay() < 0) {
+  if (oledInitDisplay() < 0) {
     printf("init oled screen failed!\r\n");
   } else {
     puts("oled ok!");
@@ -164,6 +165,9 @@ int main(void)
   // disable DMA half-complete interrupt
   __HAL_DMA_DISABLE_IT(&uart1RxDMAHandle, DMA_IT_HT);
 
+  oledFill(0x00);
+  char cbuf[128];
+
   while (1)
   {
     /* USER CODE END WHILE */
@@ -176,8 +180,10 @@ int main(void)
     HAL_Delay(500);
     GPIOB->ODR = LED_B;
     HAL_Delay(500);
-  
+    count += 1;
 
+    sprintf(cbuf, "count: %lu", count);
+    oledShowString(0, 0, cbuf);
   }
   /* USER CODE END 3 */
 }

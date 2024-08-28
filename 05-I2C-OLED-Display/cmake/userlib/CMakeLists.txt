@@ -26,6 +26,7 @@ target_sources(userlib INTERFACE
     ../../User/Src/my_dma.c
     ../../User/Src/oled.c
     ../../User/Src/uart.c
+    ../../User/Src/font.c
 )
 
 target_link_directories(userlib INTERFACE
