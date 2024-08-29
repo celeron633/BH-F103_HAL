@@ -13,16 +13,22 @@ struct OLED_Config {
     uint8_t i2cAddr;
 };
 
-void oledConfigDisplay(I2C_HandleTypeDef *handle, uint8_t i2cAddr);
-int  oledInitDisplay();
+void OLED_ConfigDisplay(I2C_HandleTypeDef *handle, uint8_t i2cAddr);
+int  OLED_InitDisplay();
 
-void oledSetPos(uint8_t xPos, uint8_t yPos);
-void oledFill(uint8_t data);
-void oledPrint(uint8_t xPos, uint8_t yPos, const char *str);
-void oledShowChar(uint8_t xPos, uint8_t yPos, char c);
-void oledShowString(uint8_t xPos, uint8_t yPos, char str[]);
+void OLED_SetPos(uint8_t X, uint8_t Y);
+void OLED_SetCursor(uint8_t page, uint8_t X);
+void OLED_Fill(uint8_t data);
 
-// int oledWriteCmd(uint8_t cmd);
-// int oledWriteData(uint8_t data);
+void OLED_NewFrame();
+void OLED_ShowFrame();
+void OLED_SetPixel(int X, int Y);
+
+void OLED_ShowChar(uint8_t X, uint8_t Y, char c);
+void OLED_dShowString(uint8_t X, uint8_t Y, const char *str);
+
+
+// TEST
+void oledTest();
 
 #endif

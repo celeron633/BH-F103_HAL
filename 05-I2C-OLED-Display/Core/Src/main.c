@@ -115,13 +115,13 @@ int main(void)
   InitBoardUART();
 
   // OLED
-  // 0x78: oled i2c address
-  oledConfigDisplay(&hi2c1, 0x78);
+  // 0x78: OLED i2c address
+  OLED_ConfigDisplay(&hi2c1, 0x78);
 
-  if (oledInitDisplay() < 0) {
-    printf("init oled screen failed!\r\n");
+  if (OLED_InitDisplay() < 0) {
+    printf("init OLED screen failed!\r\n");
   } else {
-    puts("oled ok!");
+    puts("OLED ok!");
   }
 
   /* USER CODE END 2 */
@@ -154,6 +154,7 @@ int main(void)
   HAL_NVIC_EnableIRQ(DMA1_Channel4_IRQn);
 
   // dma tx test
+#if 0
   char buf[] = "hello world DMA\r\n";
   HAL_UART_Transmit_DMA(&uart1Handle, (uint8_t *)buf, sizeof(buf));
 
@@ -164,9 +165,7 @@ int main(void)
   HAL_UARTEx_ReceiveToIdle_DMA(&uart1Handle, (uint8_t*)uartRecvBuf, sizeof(uartRecvBuf));
   // disable DMA half-complete interrupt
   __HAL_DMA_DISABLE_IT(&uart1RxDMAHandle, DMA_IT_HT);
-
-  oledFill(0x00);
-  char cbuf[128];
+#endif
 
   while (1)
   {
@@ -182,8 +181,8 @@ int main(void)
     HAL_Delay(500);
     count += 1;
 
-    sprintf(cbuf, "count: %lu", count);
-    oledShowString(0, 0, cbuf);
+    // sprintf(cbuf, "count: %lu", count);
+    // oledShowString(0, 0, cbuf);
   }
   /* USER CODE END 3 */
 }
