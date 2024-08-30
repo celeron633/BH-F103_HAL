@@ -24,11 +24,13 @@ void OLED_NewFrame();
 void OLED_ShowFrame();
 void OLED_SetPixel(int X, int Y);
 
+void OLED_ShowImage(int16_t X, int16_t Y, uint8_t width, uint8_t height, const uint8_t *image);
+
 void OLED_ShowChar(uint8_t X, uint8_t Y, char c);
-void OLED_dShowString(uint8_t X, uint8_t Y, const char *str);
+void OLED_ShowString(uint8_t X, uint8_t Y, const char *str);
 
 
 // TEST
-void oledTest();
+void OLED_Test();
 
 #endif

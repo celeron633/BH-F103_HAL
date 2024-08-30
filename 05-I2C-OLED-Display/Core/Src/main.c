@@ -167,6 +167,8 @@ int main(void)
   __HAL_DMA_DISABLE_IT(&uart1RxDMAHandle, DMA_IT_HT);
 #endif
 
+  OLED_Test();
+
   while (1)
   {
     /* USER CODE END WHILE */

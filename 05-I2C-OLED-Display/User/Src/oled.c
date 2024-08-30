@@ -12,7 +12,7 @@ uint8_t OLED_GRAM[OLED_PAGES][OLED_COLUMN];
 struct OLED_Config g_oledCfg;
 
 // 字体设置
-const ASCIIFont *currFont = &afont12x6;
+const ASCIIFont *currFont = &afont16x8;
 
 void OLED_ConfigDisplay(I2C_HandleTypeDef *handle, uint8_t i2cAddr)
 {
@@ -151,12 +151,71 @@ void OLED_ShowFrame()
     }
 }
 
-void OLED_ShowChar(uint8_t X, uint8_t Y, char c)
+// image需要按列行式进行存储
+void OLED_ShowImage(int16_t X, int16_t Y, uint8_t width, uint8_t height, const uint8_t *image)
 {
-    
+    // 画的内容占多少页面（向上取整）
+    uint8_t pages = ((height - 1) / 8) + 1;
+    // 开始在哪页画
+    uint8_t startPage = Y / 8;
+
+    uint8_t shift = Y % 8;
+
+    // 处理每一页
+    for (uint8_t i = 0; i < pages; i++) {
+        // 处理每一列
+        for (uint8_t j = 0; j < width; j++) {
+            // 只画范围内
+            if (X + j >= 0 && X + j < OLED_COLUMN) {
+                if (startPage + i >= 0 && startPage + i < OLED_ROW) {
+                    // 低位往高位移动
+                    OLED_GRAM[startPage + i][X + j] |= (image[i * width + j] << shift);
+                }
+                // 当前页有跨到下一页的处理
+                if (startPage + i + 1 >= 0 && startPage + i + 1 < OLED_ROW) {
+                    // 高位往低位移动
+                    OLED_GRAM[startPage + i + 1][X + j] |= (image[i * width + j] >> (8 - shift));
+                }
+            }
+        }
+    }
 }
 
-void oledShowString(uint8_t X, uint8_t Y, const char *str)
+void OLED_ShowChar(uint8_t X, uint8_t Y, char c)
 {
+    uint8_t chrIndex = c - ' ';
+    uint32_t arrayIndex = (((currFont->h) + 7) / 8) * currFont->w;
+
+    // printf("chrIndex: %u, arrayIndex: %lu\r\n", chrIndex, arrayIndex);
+    OLED_ShowImage(X, Y, currFont->w, currFont->h, currFont->chars + chrIndex * arrayIndex);
+}
+
+void OLED_ShowString(uint8_t X, uint8_t Y, const char *str)
+{
+    while (*str) {
+        OLED_ShowChar(X, Y, *str);
+        X += currFont->w;
+        str++;
+    }
+}
+
+void OLED_Test()
+{
+    OLED_NewFrame();
+    OLED_ShowFrame();
+    
+    int i = 0;
+    for (;;) {
+        if (i >= 50) {
+            i = 0;
+        }
+        OLED_NewFrame();
+        OLED_ShowString(0, i, "Hello World");
+        // OLED_ShowChar(0, 0, 'A');
+        OLED_ShowFrame();
+        HAL_Delay(100);
+        i+=3;
+    }
+
     
 }
