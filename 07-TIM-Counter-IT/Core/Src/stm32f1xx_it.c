@@ -62,6 +62,9 @@
 extern UART_HandleTypeDef uart1Handle;
 extern uint8_t uartRecvBuf[256];
 
+extern TIM_HandleTypeDef htim2;
+extern uint32_t count;
+
 /* USER CODE END EV */
 
 /******************************************************************************/
@@ -219,5 +222,13 @@ void DMA1_Channel5_IRQHandler(void)
 void DMA1_Channel4_IRQHandler(void)
 {
   HAL_DMA_IRQHandler(&uart1TxDMAHandle);
+}
+
+void TIM2_IRQHandler(void)
+{
+  // uint32_t timVal = __HAL_TIM_GET_COUNTER(&htim2);
+  // printf("timVal: %lu\r\n", timVal);
+  count++;
+  HAL_TIM_IRQHandler(&htim2);
 }
 /* USER CODE END 1 */

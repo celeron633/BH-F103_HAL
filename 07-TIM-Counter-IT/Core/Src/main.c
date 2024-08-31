@@ -28,6 +28,7 @@
 #include <stdio.h>
 #include "uart.h"
 #include "my_dma.h"
+#include "my_tim.h"
 #include "oled.h"
 
 /* USER CODE END Includes */
@@ -65,6 +66,9 @@ extern UART_HandleTypeDef uart1Handle;
 extern DMA_HandleTypeDef uart1RxDMAHandle;
 uint8_t uartRecvBuf[256];
 uint32_t count = 0;
+
+// TIM
+extern TIM_HandleTypeDef htim2;
 
 /* USER CODE END PV */
 
@@ -152,8 +156,22 @@ int main(void)
   HAL_NVIC_SetPriority(DMA1_Channel4_IRQn, 4, 0);
   HAL_NVIC_EnableIRQ(DMA1_Channel4_IRQn);
 
+  // 启动定时器的编码器模块
+  // HAL_TIM_Encoder_Start(&htim1, TIM_CHANNEL_1);
 
-  HAL_TIM_Encoder_Start(&htim1, TIM_CHANNEL_1);
+  // 初始化TIM2
+  if (InitTIM2() == HAL_OK) {
+    printf("TIM2 init success!\r\n");
+  } else {
+    printf("TIM2 init FAILED!\r\n");
+  }
+
+  // 启动TIM2计时
+  HAL_TIM_Base_Start_IT(&htim2);
+
+  // 设置TIM2的NVIC通道和优先级
+  HAL_NVIC_SetPriority(TIM2_IRQn, 5, 0);
+  HAL_NVIC_EnableIRQ(TIM2_IRQn);
 
   while (1)
   {
@@ -161,8 +179,8 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
     char buf[256] = {0};
-    uint16_t counterValue = __HAL_TIM_GET_COUNTER(&htim1);
-    sprintf(buf, "counter: %u", counterValue);
+    // uint16_t counterValue = __HAL_TIM_GET_COUNTER(&htim1);
+    sprintf(buf, "count: [%lu]", count);
   
     OLED_NewFrame();
     OLED_ShowString(0, 0, buf);
