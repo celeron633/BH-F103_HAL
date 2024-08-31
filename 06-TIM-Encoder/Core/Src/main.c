@@ -19,6 +19,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "i2c.h"
+#include "tim.h"
 #include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
@@ -108,6 +109,7 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_I2C1_Init();
+  MX_TIM1_Init();
   /* USER CODE BEGIN 2 */
   
   // UART1 and DMA
@@ -138,9 +140,6 @@ int main(void)
 
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
-  // recv data from UART in interrupt mode
-  // HAL_UART_Receive_IT(&uart1Handle, uartRecvBuf, 16);
-
   // enable NVIC interrupt handle for USART1
   HAL_NVIC_SetPriority(USART1_IRQn, 5, 0);
   HAL_NVIC_EnableIRQ(USART1_IRQn);
@@ -153,38 +152,22 @@ int main(void)
   HAL_NVIC_SetPriority(DMA1_Channel4_IRQn, 4, 0);
   HAL_NVIC_EnableIRQ(DMA1_Channel4_IRQn);
 
-  // dma tx test
-#if 0
-  char buf[] = "hello world DMA\r\n";
-  HAL_UART_Transmit_DMA(&uart1Handle, (uint8_t *)buf, sizeof(buf));
 
-  HAL_Delay(10);
-  // dma rx
-  // HAL_UART_Receive_DMA(&uart1Handle, (uint8_t*)uartRecvBuf, sizeof(uartRecvBuf));
-  // start rx DMA
-  HAL_UARTEx_ReceiveToIdle_DMA(&uart1Handle, (uint8_t*)uartRecvBuf, sizeof(uartRecvBuf));
-  // disable DMA half-complete interrupt
-  __HAL_DMA_DISABLE_IT(&uart1RxDMAHandle, DMA_IT_HT);
-#endif
-
-  OLED_Test();
+  HAL_TIM_Encoder_Start(&htim1, TIM_CHANNEL_1);
 
   while (1)
   {
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-    
-    GPIOB->ODR = LED_R;
-    HAL_Delay(500);
-    GPIOB->ODR = LED_G;
-    HAL_Delay(500);
-    GPIOB->ODR = LED_B;
-    HAL_Delay(500);
-    count += 1;
-
-    // sprintf(cbuf, "count: %lu", count);
-    // oledShowString(0, 0, cbuf);
+    char buf[256] = {0};
+    uint16_t counterValue = __HAL_TIM_GET_COUNTER(&htim1);
+    sprintf(buf, "counter: %u", counterValue);
+  
+    OLED_NewFrame();
+    OLED_ShowString(0, 0, buf);
+    OLED_ShowFrame();
+    HAL_Delay(50);
   }
   /* USER CODE END 3 */
 }
