@@ -25,6 +25,7 @@ target_sources(userlib INTERFACE
     ../../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_uart.c
     ../../User/Src/my_dma.c
     ../../User/Src/oled.c
+    ../../User/Src/tpad.c
     ../../User/Src/uart.c
     ../../User/Src/font.c
 )

@@ -19,6 +19,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "i2c.h"
+#include "tim.h"
 #include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
@@ -28,6 +29,7 @@
 #include "uart.h"
 #include "my_dma.h"
 #include "oled.h"
+#include "tpad.h"
 
 /* USER CODE END Includes */
 
@@ -108,6 +110,7 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_I2C1_Init();
+  MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
   
   // UART1 and DMA
@@ -167,7 +170,8 @@ int main(void)
   __HAL_DMA_DISABLE_IT(&uart1RxDMAHandle, DMA_IT_HT);
 #endif
 
-  OLED_Test();
+  // OLED_Test();
+  TPAD_Init();
 
   while (1)
   {
@@ -175,6 +179,7 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
     
+    /*
     GPIOB->ODR = LED_R;
     HAL_Delay(500);
     GPIOB->ODR = LED_G;
@@ -182,6 +187,7 @@ int main(void)
     GPIOB->ODR = LED_B;
     HAL_Delay(500);
     count += 1;
+    */
 
     // sprintf(cbuf, "count: %lu", count);
     // oledShowString(0, 0, cbuf);
