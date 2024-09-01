@@ -66,6 +66,7 @@ extern UART_HandleTypeDef uart1Handle;
 extern DMA_HandleTypeDef uart1RxDMAHandle;
 uint8_t uartRecvBuf[256];
 uint32_t count = 0;
+extern struct TPAD_Config tpadConfig;
 
 /* USER CODE END PV */
 
@@ -173,6 +174,7 @@ int main(void)
   // OLED_Test();
   TPAD_Init();
 
+  char oledBuf[128] = {0};
   while (1)
   {
     /* USER CODE END WHILE */
@@ -189,8 +191,19 @@ int main(void)
     count += 1;
     */
 
-    // sprintf(cbuf, "count: %lu", count);
-    // oledShowString(0, 0, cbuf);
+    OLED_NewFrame();
+    uint32_t val = TPAD_Scan();
+    sprintf(oledBuf, "TPAD: %lu us", val);
+    OLED_ShowString(0, 0, oledBuf);
+    if (val > tpadConfig.initChargeDelay + 10) {
+      // printf("TPAD pressed!\r\n");
+      OLED_ShowString(0, 16, "TPAD PRESSED!");
+    } else {
+      // printf("TPAD not pressed!\r\n");
+      OLED_ShowString(0, 16, "TPAD NOT PRESSED!");
+    }
+    OLED_ShowFrame();
+    HAL_Delay(300);
   }
   /* USER CODE END 3 */
 }

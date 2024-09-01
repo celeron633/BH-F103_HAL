@@ -15,7 +15,7 @@ struct TPAD_Config tpadConfig = {
 static inline void SetGPIO4Output(void)
 {
     TPAD_GPIOStruct.Pin = GPIO_PIN_1 | GPIO_PIN_2;
-    TPAD_GPIOStruct.Mode = GPIO_MODE_OUTPUT_PP;
+    TPAD_GPIOStruct.Mode = GPIO_MODE_OUTPUT_OD;
     TPAD_GPIOStruct.Pull = GPIO_NOPULL;
     TPAD_GPIOStruct.Speed = GPIO_SPEED_HIGH;
     HAL_GPIO_Init(GPIOA, &TPAD_GPIOStruct);
@@ -31,10 +31,12 @@ static inline void SetGPIO4TIM(void)
 
 static void DischargeTPAD(void)
 {
+    // 设置GPIO为输出模式
     SetGPIO4Output();
-    // 将触摸按键放电
+    // 将触摸按键放电, 本来就使用了一个1M的电阻上拉, 使用OD模式即可
     HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, GPIO_PIN_RESET);
-    HAL_Delay(50);
+    // 等待5ms确保全部释放掉
+    HAL_Delay(5);
     // 重新设置PA1为TIM的IC的输入, 同时触摸电容开始充电
     SetGPIO4TIM();
 }
@@ -43,46 +45,68 @@ void TPAD_Init()
 {
     // 开启定时器的输入捕获
     HAL_TIM_IC_Start(&htim2, TIM_CHANNEL_2);
-    __HAL_TIM_DISABLE(&htim2);
-
-    static uint32_t countValues[10] = {0};
-    uint32_t countValue = 0;
-    for (int i = 0; i < tpadConfig.initSamples; i++) {
-        printf("cal %d start!\r\n", i);
-        
-        // CNT寄存器先设置为0
-        __HAL_TIM_SET_COUNTER(&htim2, 0);
-        // 将触摸按键放电
-        DischargeTPAD();
-        // 开启定时器
-        __HAL_TIM_ENABLE(&htim2);
-        // 等待变成逻辑1
-        while (__HAL_TIM_GET_FLAG(&htim2, TIM_FLAG_CC2) == 0);
-        // 获取捕获寄存器的值
-        countValue = __HAL_TIM_GET_COMPARE(&htim2, TIM_CHANNEL_2);
-        countValues[i] = countValue;
-        // 暂停定时器
-        __HAL_TIM_DISABLE(&htim2);
-        // 清除捕获标识位
-        __HAL_TIM_CLEAR_FLAG(&htim2, TIM_FLAG_CC2);
-
-        printf("cal %d end! count: %lu\r\n", i, countValue);
+    int samples = tpadConfig.initSamples;
+    if (samples > 128) {
+        samples = 128;
     }
+    uint32_t compareVals[128] = {0};
+
+    for (int i = 0; i < samples; i++) {
+        compareVals[i] = TPAD_GetVal();
+    }
+
+    uint64_t tmpVal = 0;
+    for (int i = 0; i < samples; i++) {
+        tmpVal += compareVals[i];
+    }
+    tpadConfig.initChargeDelay = tmpVal / samples;
+    printf("init charge delay: [%lu] us\r\n", tpadConfig.initChargeDelay);
 }
 
-void TPAD_Test()
+int TPAD_GetVal()
 {
-    __HAL_RCC_GPIOA_CLK_ENABLE();
-    // __HAL_RCC_GPIOB_CLK_ENABLE();
+    uint32_t countValue = 0;
+    // 清除捕获和更新标识
+    __HAL_TIM_CLEAR_FLAG(&htim2, TIM_FLAG_CC2 | TIM_FLAG_UPDATE);
+    // 放电电容按钮
+    DischargeTPAD();
+    // 设置定时器CNT值为0
+    __HAL_TIM_SET_COUNTER(&htim2, 0);
+    while (__HAL_TIM_GET_FLAG(&htim2, TIM_FLAG_CC2) == 0);
+    // 等待捕获一个上升沿完成
+    countValue = __HAL_TIM_GET_COMPARE(&htim2, TIM_CHANNEL_2);
+#if 0
+    printf("count: [%lu] us\r\n", countValue);
+#endif
 
-    SetGPIO4Output();
-    // 将触摸按键放电
-    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, GPIO_PIN_RESET);
+    return countValue;
 }
 
 int TPAD_Scan()
 {
-    
+    int samples = tpadConfig.scanSamples;
+    if (samples > 128) {
+        samples = 128;
+    }
+    uint32_t compareVals[128] = {0};
 
-    return 0;
+    for (int i = 0; i < samples; i++) {
+        compareVals[i] = TPAD_GetVal();
+    }
+
+    uint64_t tmpVal = 0;
+    uint32_t scanDelay = 0;
+    for (int i = 0; i < samples; i++) {
+        tmpVal += compareVals[i];
+    }
+    scanDelay = tmpVal / samples;
+    // tpadConfig.initChargeDelay = tmpVal / samples;
+    printf("scan charge delay: [%lu] us\r\n", scanDelay);
+
+    return scanDelay;
+}
+
+void TPAD_Test()
+{
+    
 }

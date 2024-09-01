@@ -19,6 +19,8 @@ struct TPAD_Config {
 
 void TPAD_Init();
 int TPAD_Scan();
+// 获取一次充电时间
+int TPAD_GetVal();
 
 void TPAD_Test();
 
