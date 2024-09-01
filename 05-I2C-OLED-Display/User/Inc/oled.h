@@ -21,6 +21,7 @@ void OLED_SetCursor(uint8_t page, uint8_t X);
 void OLED_Fill(uint8_t data);
 
 void OLED_NewFrame();
+void OLED_ClearArea(int16_t X, int16_t Y, uint8_t width, uint8_t height);
 void OLED_ShowFrame();
 void OLED_SetPixel(int X, int Y);
 
@@ -29,6 +30,7 @@ void OLED_ShowImage(int16_t X, int16_t Y, uint8_t width, uint8_t height, const u
 void OLED_ShowChar(uint8_t X, uint8_t Y, char c);
 void OLED_ShowString(uint8_t X, uint8_t Y, const char *str);
 
+void OLED_DrawRectangle(int16_t X, int16_t Y, uint8_t width, uint8_t height);
 
 // TEST
 void OLED_Test();
