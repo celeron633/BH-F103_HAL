@@ -131,6 +131,20 @@ void OLED_NewFrame()
     OLED_Fill(0x00);
 }
 
+// 逻辑参考SetPixel
+void OLED_ClearArea(int16_t X, int16_t Y, uint8_t width, uint8_t height)
+{
+   // 这个是像素级别操作, 和DrawImage不同
+   for (int16_t i = Y; i < height; i++) {
+        for (int16_t j = X; j < width; j++) {
+            if (i >= 0 && i < OLED_ROW && j >= 0 && j < OLED_COLUMN) {
+                // 这里只会清零XY对应的那个像素
+                OLED_GRAM[i / 8][j] &= ~(0x01 << (i % 8));
+            }
+        }
+   }
+}
+
 void OLED_SetPixel(int X, int Y)
 {
     // 越界
@@ -154,6 +168,9 @@ void OLED_ShowFrame()
 // image需要按列行式进行存储
 void OLED_ShowImage(int16_t X, int16_t Y, uint8_t width, uint8_t height, const uint8_t *image)
 {
+    // 先清空那片区域
+    OLED_ClearArea(X, Y, width, height);
+
     // 画的内容占多少页面（向上取整）
     uint8_t pages = ((height - 1) / 8) + 1;
     // 开始在哪页画
@@ -199,14 +216,24 @@ void OLED_ShowString(uint8_t X, uint8_t Y, const char *str)
     }
 }
 
+void OLED_DrawRectangle(int16_t X, int16_t Y, uint8_t width, uint8_t height)
+{
+    for (uint8_t i = 0; i < height; i++) {
+        for (uint8_t j = 0; j < width; j++) {
+            OLED_SetPixel(X+j, Y+i);
+        }
+    }
+}
+
 void OLED_Test()
 {
     OLED_NewFrame();
     OLED_ShowFrame();
     
+    /*
     int i = 0;
     for (;;) {
-        if (i >= 50) {
+        if (i > 64-currFont->h) {
             i = 0;
         }
         OLED_NewFrame();
@@ -216,6 +243,20 @@ void OLED_Test()
         HAL_Delay(100);
         i+=3;
     }
-
+    */
+    // OLED_ShowChar(0, 0, 'A');
+    // OLED_ShowChar(0, 0, 'B');
+    int i = 0;
+    for (;;) {
+        if (i >= 127) {
+            i = 0;
+        }
+        i+=3;
+        OLED_NewFrame();
+        OLED_DrawRectangle(0, 0, i, 16);
+        OLED_ShowFrame();
+        HAL_Delay(100);
+    }
     
+
 }

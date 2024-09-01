@@ -162,10 +162,11 @@ int main(void)
     /* USER CODE BEGIN 3 */
     char buf[256] = {0};
     uint16_t counterValue = __HAL_TIM_GET_COUNTER(&htim1);
-    sprintf(buf, "counter: %u", counterValue);
+    sprintf(buf, "Encoder: %u", counterValue);
   
     OLED_NewFrame();
     OLED_ShowString(0, 0, buf);
+    OLED_DrawRectangle(0, 16, counterValue, 16);
     OLED_ShowFrame();
     HAL_Delay(50);
   }
