@@ -14,18 +14,29 @@ struct OLED_Config g_oledCfg;
 // 字体设置
 const ASCIIFont *currFont = &afont16x8;
 
+#ifdef HARDWARE_I2C
 void OLED_ConfigDisplay(I2C_HandleTypeDef *handle, uint8_t i2cAddr)
 {
     g_oledCfg.i2cHandle = handle;
     g_oledCfg.i2cAddr = i2cAddr;
 }
+#else
+void OLED_ConfigDisplay(uint8_t i2cAddr)
+{
+    g_oledCfg.i2cAddr = i2cAddr;
+}
+#endif
 
 static int OLED_WriteCmd(uint8_t cmd)
 {
     uint8_t buf[2];
     buf[0] = 0x00;
     buf[1] = cmd;
+#ifdef HARDWARE_I2C
     return HAL_I2C_Master_Transmit(g_oledCfg.i2cHandle, g_oledCfg.i2cAddr, buf, sizeof(buf), HAL_MAX_DELAY);
+#endif
+
+    return 0;
 }
 
 static int OLED_WriteData(uint8_t *data, size_t len)
@@ -37,8 +48,12 @@ static int OLED_WriteData(uint8_t *data, size_t len)
     }
     memcpy(buf+1, data, len);
 
+#ifdef HARDWARE_I2C
     // len+1包含了0x40作为数据开头
     return HAL_I2C_Master_Transmit(g_oledCfg.i2cHandle, g_oledCfg.i2cAddr, buf, len+1, HAL_MAX_DELAY);
+#endif
+
+    return 0;
 }
 
 int OLED_InitDisplay()
@@ -46,9 +61,11 @@ int OLED_InitDisplay()
     // 等待OLED初始化
     HAL_Delay(20);
 
+#ifdef HARDWARE_I2C
     if (g_oledCfg.i2cHandle->State != HAL_I2C_STATE_READY) {
         return -1;
     }
+#endif
 
     OLED_WriteCmd(0xAE); // 屏幕关
 	OLED_WriteCmd(0x20); // 设置寻址模式

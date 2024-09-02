@@ -18,7 +18,6 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "i2c.h"
 #include "tim.h"
 #include "gpio.h"
 
@@ -105,7 +104,6 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_I2C1_Init();
   MX_TIM6_Init();
   /* USER CODE BEGIN 2 */
   
@@ -115,7 +113,9 @@ int main(void)
 
   // OLED
   // 0x78: OLED i2c address
+#ifdef HARDWARE_I2C
   OLED_ConfigDisplay(&hi2c1, 0x78);
+#endif
 
   if (OLED_InitDisplay() < 0) {
     printf("init OLED screen failed!\r\n");
@@ -152,7 +152,7 @@ int main(void)
   HAL_NVIC_SetPriority(DMA1_Channel4_IRQn, 4, 0);
   HAL_NVIC_EnableIRQ(DMA1_Channel4_IRQn);
 
-  // 启动delay用的定时器
+  // 启动delay用的定时�?
   HAL_TIM_Base_Start(&htim6);
 
   // OLED_Test();
