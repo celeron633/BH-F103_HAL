@@ -19,6 +19,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "i2c.h"
+#include "tim.h"
 #include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
@@ -28,6 +29,7 @@
 #include "uart.h"
 #include "my_dma.h"
 #include "oled.h"
+#include "delay.h"
 
 /* USER CODE END Includes */
 
@@ -104,6 +106,7 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_I2C1_Init();
+  MX_TIM6_Init();
   /* USER CODE BEGIN 2 */
   
   // UART1 and DMA
@@ -149,6 +152,9 @@ int main(void)
   HAL_NVIC_SetPriority(DMA1_Channel4_IRQn, 4, 0);
   HAL_NVIC_EnableIRQ(DMA1_Channel4_IRQn);
 
+  // 启动delay用的定时器
+  HAL_TIM_Base_Start(&htim6);
+
   // OLED_Test();
 
   while (1)
@@ -156,6 +162,12 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+    GPIOB->ODR = LED_R;
+    delay_ms(500);
+    GPIOB->ODR = LED_G;
+    delay_ms(500);
+    GPIOB->ODR = LED_B;
+    delay_ms(500);
   }
   /* USER CODE END 3 */
 }

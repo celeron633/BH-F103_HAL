@@ -27,6 +27,7 @@ target_sources(userlib INTERFACE
     ../../User/Src/oled.c
     ../../User/Src/uart.c
     ../../User/Src/font.c
+    ../../User/Src/delay.c
 )
 
 target_link_directories(userlib INTERFACE
