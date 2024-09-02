@@ -28,6 +28,7 @@ target_sources(userlib INTERFACE
     ../../User/Src/uart.c
     ../../User/Src/font.c
     ../../User/Src/delay.c
+    ../../User/Src/my_i2c.c
 )
 
 target_link_directories(userlib INTERFACE
