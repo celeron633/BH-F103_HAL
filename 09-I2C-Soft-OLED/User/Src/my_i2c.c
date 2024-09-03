@@ -136,6 +136,22 @@ void I2C_WriteAck()
     CLK_L();
 }
 
+void I2C_WriteData(uint8_t addr, uint8_t *data, size_t len)
+{
+    I2C_Start();
+    I2C_WriteByte(addr);
+    // 必须ACK, 不然从机不认下个字节
+    I2C_ReadAck();
+
+    for (size_t i = 0; i < len; i++) {
+        I2C_WriteByte(*(data + i));
+        // 必须ACK, 不然从机不认下个字节
+        I2C_ReadAck();
+    }
+
+    I2C_Stop();
+}
+
 void I2C_Test(void)
 {
     uint32_t i2cAddr = 0x78;

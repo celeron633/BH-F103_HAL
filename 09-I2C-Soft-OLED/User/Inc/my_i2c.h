@@ -22,4 +22,6 @@ uint8_t I2C_ReadAck(void);
 
 void    I2C_Test(void);
 
+void I2C_WriteData(uint8_t addr, uint8_t *data, size_t len);
+
 #endif

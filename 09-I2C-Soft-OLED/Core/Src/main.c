@@ -113,6 +113,11 @@ int main(void)
   HAL_StatusTypeDef dmaInitStat = InitUART1DMA();
   InitBoardUART();
 
+  // 启动delay用的定时
+  HAL_TIM_Base_Start(&htim6);
+  // 初始化软I2C的GPIO
+  I2C_Init();
+
   // OLED
   // 0x78: OLED i2c address
 #ifdef HARDWARE_I2C
@@ -154,12 +159,9 @@ int main(void)
   HAL_NVIC_SetPriority(DMA1_Channel4_IRQn, 4, 0);
   HAL_NVIC_EnableIRQ(DMA1_Channel4_IRQn);
 
-  // 启动delay用的定时�?
-  HAL_TIM_Base_Start(&htim6);
+  OLED_Test();
 
-  // OLED_Test();
-
-  I2C_Test();
+  // I2C_Test();
 
   while (1)
   {
