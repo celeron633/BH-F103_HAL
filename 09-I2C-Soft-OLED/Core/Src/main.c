@@ -30,6 +30,8 @@
 #include "oled.h"
 #include "delay.h"
 
+#include "my_i2c.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -156,6 +158,8 @@ int main(void)
   HAL_TIM_Base_Start(&htim6);
 
   // OLED_Test();
+
+  I2C_Test();
 
   while (1)
   {
