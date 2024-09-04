@@ -7,14 +7,14 @@
 static inline void WriteSDA(uint8_t state)
 {
     HAL_GPIO_WritePin(GPIOB, I2C_SDA_PIN , state);
-    delay_us(10);
+    delay_us(2);
 }
 
 // 写CLK
 static inline void WriteCLK(uint8_t state)
 {
     HAL_GPIO_WritePin(GPIOB, I2C_CLK_PIN , state);
-    delay_us(10);
+    delay_us(2);
 }
 
 // 读SDA
