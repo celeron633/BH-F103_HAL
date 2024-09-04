@@ -3,8 +3,6 @@
 
 #include <stdio.h>
 
-int g_i2cInitFlag = 0;
-
 // 写SDA
 static inline void WriteSDA(uint8_t state)
 {
@@ -33,10 +31,6 @@ static inline uint8_t ReadSDA()
 
 void I2C_Init(void)
 {
-    if (g_i2cInitFlag) {
-        return;
-    }
-
     __HAL_RCC_GPIOB_CLK_ENABLE();
 
     GPIO_InitTypeDef i2cGpio = {0};
@@ -49,7 +43,6 @@ void I2C_Init(void)
 
     // 先全部释放掉
     HAL_GPIO_WritePin(GPIOB, I2C_SDA_PIN | I2C_CLK_PIN, GPIO_PIN_SET);
-    g_i2cInitFlag = 1;
 }
 
 void I2C_Start(void)

@@ -115,15 +115,8 @@ int main(void)
 
   // 启动delay用的定时
   HAL_TIM_Base_Start(&htim6);
-  // 初始化软I2C的GPIO
-  I2C_Init();
 
   // OLED
-  // 0x78: OLED i2c address
-#ifdef HARDWARE_I2C
-  OLED_ConfigDisplay(&hi2c1, 0x78);
-#endif
-
   if (OLED_InitDisplay() < 0) {
     printf("init OLED screen failed!\r\n");
   } else {

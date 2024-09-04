@@ -3,11 +3,7 @@
 
 #include "main.h"
 
-#ifdef HARDWARE_I2C
-#include "i2c.h"
-#else
 #include "my_i2c.h"
-#endif
 
 #include "stm32f1xx_hal_uart.h"
 #include "stm32f103xe.h"
@@ -15,17 +11,10 @@
 extern struct OLED_Config g_oledCfg;
 
 struct OLED_Config {
-#ifdef HARDWARE_I2C
-    I2C_HandleTypeDef *i2cHandle;
-#endif
     uint8_t i2cAddr;
 };
 
-#ifdef HARDWARE_I2C
-void OLED_ConfigDisplay(I2C_HandleTypeDef *handle, uint8_t i2cAddr);
-#else 
 void OLED_ConfigDisplay(uint8_t i2cAddr);
-#endif
 
 int  OLED_InitDisplay();
 
