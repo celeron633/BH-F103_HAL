@@ -53,7 +53,7 @@ static int OLED_WriteData(uint8_t *data, size_t len)
     // len+1包含了0x40作为数据开头
     return HAL_I2C_Master_Transmit(g_oledCfg.i2cHandle, g_oledCfg.i2cAddr, buf, len+1, HAL_MAX_DELAY);
 #endif
-    I2C_WriteData(0x78, buf, sizeof(buf));
+    I2C_WriteData(0x78, buf, len+1);
 
     return 0;
 }
@@ -263,7 +263,7 @@ void OLED_Test()
         i+=3;
     }
     */
-    OLED_ShowString(0, 16, "Hello World");
+    OLED_ShowString(0, 0, "Hello World");
     OLED_ShowFrame();
     // OLED_ShowChar(0, 0, 'B');
     /*
