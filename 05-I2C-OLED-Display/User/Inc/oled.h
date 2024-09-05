@@ -6,6 +6,8 @@
 #include "stm32f1xx_hal_uart.h"
 #include "stm32f103xe.h"
 
+#define OLED_1INCH3
+
 extern struct OLED_Config g_oledCfg;
 
 struct OLED_Config {
