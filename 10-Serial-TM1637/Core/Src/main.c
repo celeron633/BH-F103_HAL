@@ -19,6 +19,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "i2c.h"
+#include "tim.h"
 #include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
@@ -28,6 +29,7 @@
 #include "uart.h"
 #include "my_dma.h"
 #include "oled.h"
+#include "tm1637.h"
 
 /* USER CODE END Includes */
 
@@ -64,6 +66,8 @@ extern UART_HandleTypeDef uart1Handle;
 extern DMA_HandleTypeDef uart1RxDMAHandle;
 uint8_t uartRecvBuf[256];
 uint32_t count = 0;
+
+extern TIM_HandleTypeDef htim6;
 
 /* USER CODE END PV */
 
@@ -108,6 +112,7 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_I2C1_Init();
+  MX_TIM6_Init();
   /* USER CODE BEGIN 2 */
   
   // UART1 and DMA
@@ -117,6 +122,8 @@ int main(void)
   // OLED
   // 0x78: OLED i2c address
   OLED_ConfigDisplay(&hi2c1, 0x78);
+
+  HAL_TIM_Base_Start(&htim6);
 
   if (OLED_InitDisplay() < 0) {
     printf("init OLED screen failed!\r\n");
@@ -167,7 +174,12 @@ int main(void)
   __HAL_DMA_DISABLE_IT(&uart1RxDMAHandle, DMA_IT_HT);
 #endif
 
-  OLED_Test();
+  tm1637Init();
+  tm1637Display("1234", 4);
+
+  
+
+  // OLED_Test();
 
   while (1)
   {
@@ -181,7 +193,6 @@ int main(void)
     HAL_Delay(500);
     GPIOB->ODR = LED_B;
     HAL_Delay(500);
-    count += 1;
 
     // sprintf(cbuf, "count: %lu", count);
     // oledShowString(0, 0, cbuf);
