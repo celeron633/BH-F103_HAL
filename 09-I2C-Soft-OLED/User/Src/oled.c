@@ -111,6 +111,8 @@ void OLED_SetPos(uint8_t X, uint8_t Y)
 
 void OLED_SetCursor(uint8_t page, uint8_t X)
 {
+    X = X + 2;
+
     // b0~b7: 设置页地址
     OLED_WriteCmd(0xb0 + page);
 
