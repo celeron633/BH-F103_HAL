@@ -9,25 +9,25 @@ static uint8_t digitMap[] = {0x3f, 0x06, 0x5b, 0x4f, 0x66, 0x6d, 0x7d, 0x07, 0x7
 static inline void CLK_H()
 {
     HAL_GPIO_WritePin(TM1637_GPIO, TM1637_CLK, GPIO_PIN_SET);
-    delay_us(10);
+    delay_us(2);
 }
 
 static inline void CLK_L()
 {
     HAL_GPIO_WritePin(TM1637_GPIO, TM1637_CLK, GPIO_PIN_RESET);
-    delay_us(10);
+    delay_us(2);
 }
 
 static inline void DIO_H()
 {
     HAL_GPIO_WritePin(TM1637_GPIO, TM1637_DIO, GPIO_PIN_SET);
-    delay_us(10);
+    delay_us(2);
 }
 
 static inline void DIO_L()
 {
     HAL_GPIO_WritePin(TM1637_GPIO, TM1637_DIO, GPIO_PIN_RESET);
-    delay_us(10);
+    delay_us(2);
 }
 
 void tm1637Init(void)
@@ -70,7 +70,7 @@ void tm1637Write(uint8_t dat)
         } else {
             DIO_L();
         }
-        dat = (dat >> 1);
+        dat = dat >> 1;
         CLK_H();
     }
 }
@@ -78,11 +78,7 @@ void tm1637Write(uint8_t dat)
 void tm1637WaitACK(void)
 {
     CLK_L();
-    // delay_us(5);
-    // 等待TM1637将DIO拉低
-    // while (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_7) == 1) {
-
-    // }
+    delay_us(5);
     CLK_H();
     CLK_L();
 }

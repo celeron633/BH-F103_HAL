@@ -193,6 +193,8 @@ int main(void)
     HAL_Delay(500);
     GPIOB->ODR = LED_B;
     HAL_Delay(500);
+    count++;
+    tm1637DisplayInt(count);
 
     // sprintf(cbuf, "count: %lu", count);
     // oledShowString(0, 0, cbuf);
