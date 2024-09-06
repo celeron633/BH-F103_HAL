@@ -56,11 +56,9 @@
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
-
+extern UART_HandleTypeDef huart1;
 /* USER CODE BEGIN EV */
 
-extern UART_HandleTypeDef uart1Handle;
-extern uint8_t uartRecvBuf[256];
 
 /* USER CODE END EV */
 
@@ -202,22 +200,20 @@ void SysTick_Handler(void)
 /* please refer to the startup file (startup_stm32f1xx.s).                    */
 /******************************************************************************/
 
-/* USER CODE BEGIN 1 */
-extern DMA_HandleTypeDef uart1RxDMAHandle;
-extern DMA_HandleTypeDef uart1TxDMAHandle;
-
+/**
+  * @brief This function handles USART1 global interrupt.
+  */
 void USART1_IRQHandler(void)
 {
-  HAL_UART_IRQHandler(&uart1Handle);
+  /* USER CODE BEGIN USART1_IRQn 0 */
+
+  /* USER CODE END USART1_IRQn 0 */
+  HAL_UART_IRQHandler(&huart1);
+  /* USER CODE BEGIN USART1_IRQn 1 */
+
+  /* USER CODE END USART1_IRQn 1 */
 }
 
-void DMA1_Channel5_IRQHandler(void)
-{
-  printf("DMA1_Channel5_IRQHandler\r\n");
-}
+/* USER CODE BEGIN 1 */
 
-void DMA1_Channel4_IRQHandler(void)
-{
-  HAL_DMA_IRQHandler(&uart1TxDMAHandle);
-}
 /* USER CODE END 1 */

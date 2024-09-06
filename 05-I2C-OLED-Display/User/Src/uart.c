@@ -2,6 +2,8 @@
 
 #include <stdio.h>
 
+#if 0
+
 UART_HandleTypeDef uart1Handle;
 
 extern DMA_HandleTypeDef uart1RxDMAHandle;
@@ -72,3 +74,5 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
         HAL_UART_Transmit(&uart1Handle, uartRecvBuf, Size, HAL_MAX_DELAY);
     }
 }
+
+#endif
