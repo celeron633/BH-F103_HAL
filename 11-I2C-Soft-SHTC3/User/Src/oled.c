@@ -50,44 +50,37 @@ int OLED_InitDisplay()
         return -1;
     }
 
-    OLED_WriteCmd(0xAE); // 屏幕关
-	OLED_WriteCmd(0x20); // 设置寻址模式
-	OLED_WriteCmd(0x10); /* 
-                        00,Horizontal Addressing Mode;
-		    		    01,Vertical Addressing Mode;
-		    		    10,Page    Addressing Mode (RESET);
-		    		    11,Invalid 
-                        */
-	OLED_WriteCmd(0xb0); // Set Page Start Address for Page Addressing Mode,0-7
-	OLED_WriteCmd(0xc8); // COM扫描反向
-	OLED_WriteCmd(0x00); // 起始列地址低位
-	OLED_WriteCmd(0x10); // 起始列地址高位
-	OLED_WriteCmd(0x40); // set start line address
-	OLED_WriteCmd(0x81); // 设置对比度
-	OLED_WriteCmd(0xff); // 亮度调节 范围0x00~0xff
-	OLED_WriteCmd(0xa1); // set segment re-map 0 to 127
-	OLED_WriteCmd(0xa6); // 正常显示
-	
-	OLED_WriteCmd(0xa8); // 设置MUX数(1 to 64)
-	OLED_WriteCmd(0x3F); // MUX=63 显示63行
-	
-	OLED_WriteCmd(0xa4); // 0xa4,输出 RAM 内容;0xa5,忽略 RAM 内容
-	OLED_WriteCmd(0xd3); // 设置显示偏移
-	OLED_WriteCmd(0x00); // 没有偏移
-	
-	OLED_WriteCmd(0xd5); // 设置显示时钟分频数、振荡器频率
-	OLED_WriteCmd(0xf0); // set divide ratio
-	OLED_WriteCmd(0xd9); // 设置预充电周期
-	OLED_WriteCmd(0x22); //
-	OLED_WriteCmd(0xda); // COM引脚配置
-	OLED_WriteCmd(0x12); // 启用左右反置
-	
-	OLED_WriteCmd(0xdb); // 设置 vcomh 输出
-	OLED_WriteCmd(0x20); // 0x20,0.77xVcc
-	
-	OLED_WriteCmd(0x8d); // set DC-DC enable
-	OLED_WriteCmd(0x14); //
-	OLED_WriteCmd(0xaf); // turn on oled panel
+    /*写入一系列的命令，对OLED进行初始化配置*/
+    OLED_WriteCmd(0xAE);	//设置显示开启/关闭，0xAE关闭，0xAF开启
+        
+    OLED_WriteCmd(0xD5);	//设置显示时钟分频比/振荡器频率
+    OLED_WriteCmd(0x80);	//0x00~0xFF
+        
+    OLED_WriteCmd(0xA8);	//设置多路复用率
+    OLED_WriteCmd(0x3F);	//0x0E~0x3F
+        
+    OLED_WriteCmd(0xD3);	//设置显示偏移
+    OLED_WriteCmd(0x00);	//0x00~0x7F
+        
+    OLED_WriteCmd(0x40);	//设置显示开始行，0x40~0x7F
+        
+    OLED_WriteCmd(0xA1);	//设置左右方向，0xA1正常，0xA0左右反置
+        
+    OLED_WriteCmd(0xC8);	//设置上下方向，0xC8正常，0xC0上下反置
+    OLED_WriteCmd(0xDA);	//设置COM引脚硬件配置
+    OLED_WriteCmd(0x12);
+        
+    OLED_WriteCmd(0x81);	//设置对比度
+    OLED_WriteCmd(0xCF);	//0x00~0xFF
+    OLED_WriteCmd(0xD9);	//设置预充电周期
+    OLED_WriteCmd(0xF1);
+    OLED_WriteCmd(0xDB);	//设置VCOMH取消选择级别
+    OLED_WriteCmd(0x30);
+    OLED_WriteCmd(0xA4);	//设置整个显示打开/关闭
+    OLED_WriteCmd(0xA6);	//设置正常/反色显示，0xA6正常，0xA7反色
+    OLED_WriteCmd(0x8D);	//设置充电泵
+    OLED_WriteCmd(0x14);
+    OLED_WriteCmd(0xAF);	//开启显示
 
     return 0;
 }
