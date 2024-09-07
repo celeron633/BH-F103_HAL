@@ -28,6 +28,7 @@
 
 #include <stdio.h>
 #include "oled.h"
+#include "shtc3.h"
 
 /* USER CODE END Includes */
 
@@ -119,7 +120,14 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   __HAL_RCC_GPIOB_CLK_ENABLE();
-  OLED_Test();
+  // OLED_Test();
+
+  SHTC3_Init();
+  // SHTC3_Wakeup();
+  // SHTC3_Sleep();
+  // double temp = 0, humidity = 0;
+  // SHTC3_Measure(&temp, &humidity);
+  // SHTC3_GetID();
 
   while (1)
   {
@@ -131,6 +139,12 @@ int main(void)
     GPIOB->ODR = LED_G;
     HAL_Delay(500);
     GPIOB->ODR = LED_B;
+
+    SHTC3_Wakeup();
+    // SHTC3_Sleep();
+    double temp = 0, humidity = 0;
+    SHTC3_Measure(&temp, &humidity);
+
     HAL_Delay(500);
   }
   /* USER CODE END 3 */
