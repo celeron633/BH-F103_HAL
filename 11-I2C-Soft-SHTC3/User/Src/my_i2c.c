@@ -6,21 +6,21 @@
 // 写SDA
 static inline void WriteSDA(uint8_t state)
 {
-    HAL_GPIO_WritePin(GPIOB, I2C_SDA_PIN , state);
+    HAL_GPIO_WritePin(I2C_GPIO, I2C_SDA_PIN , state);
     delay_us(2);
 }
 
 // 写CLK
 static inline void WriteCLK(uint8_t state)
 {
-    HAL_GPIO_WritePin(GPIOB, I2C_CLK_PIN , state);
+    HAL_GPIO_WritePin(I2C_GPIO, I2C_CLK_PIN , state);
     delay_us(2);
 }
 
 // 读SDA
 static inline uint8_t ReadSDA()
 {
-    return HAL_GPIO_ReadPin(GPIOB, I2C_SDA_PIN);
+    return HAL_GPIO_ReadPin(I2C_GPIO, I2C_SDA_PIN);
 }
 
 #define SDA_H() WriteSDA(1)
@@ -31,7 +31,7 @@ static inline uint8_t ReadSDA()
 
 void I2C_Init(void)
 {
-    __HAL_RCC_GPIOB_CLK_ENABLE();
+    __HAL_RCC_GPIOF_CLK_ENABLE();
 
     GPIO_InitTypeDef i2cGpio = {0};
     // 使用开漏模式
@@ -39,10 +39,10 @@ void I2C_Init(void)
     i2cGpio.Pin     = I2C_CLK_PIN | I2C_SDA_PIN;
     i2cGpio.Pull    = GPIO_NOPULL;
     i2cGpio.Speed   = GPIO_SPEED_HIGH;
-    HAL_GPIO_Init(GPIOB, &i2cGpio);
+    HAL_GPIO_Init(I2C_GPIO, &i2cGpio);
 
     // 先全部释放掉
-    HAL_GPIO_WritePin(GPIOB, I2C_SDA_PIN | I2C_CLK_PIN, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(I2C_GPIO, I2C_SDA_PIN | I2C_CLK_PIN, GPIO_PIN_SET);
 }
 
 void I2C_Start(void)
@@ -120,6 +120,10 @@ void I2C_WriteNAck()
     SDA_H();
     CLK_H();
     CLK_L();
+
+    // release SDA line
+    // 这步一定要做, 不然从机拒绝传下个字节
+    SDA_H();
 }
 
 void I2C_WriteAck()
@@ -127,6 +131,10 @@ void I2C_WriteAck()
     SDA_L();
     CLK_H();
     CLK_L();
+
+    // release SDA line
+    // 这步一定要做, 不然从机拒绝传下个字节
+    SDA_H();
 }
 
 void I2C_WriteData(uint8_t addr, uint8_t *data, size_t len)

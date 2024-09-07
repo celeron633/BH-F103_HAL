@@ -7,9 +7,9 @@
 #include <stdint.h>
 
 #define I2C_RCC
-#define I2C_GPIO        GPIOB
-#define I2C_CLK_PIN     GPIO_PIN_6
-#define I2C_SDA_PIN     GPIO_PIN_7
+#define I2C_GPIO        GPIOF
+#define I2C_CLK_PIN     GPIO_PIN_10
+#define I2C_SDA_PIN     GPIO_PIN_9
 
 void    I2C_Init(void);
 void    I2C_Start(void);
