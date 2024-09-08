@@ -121,6 +121,8 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   __HAL_RCC_GPIOB_CLK_ENABLE();
   // OLED_Test();
+  OLED_NewFrame();
+  OLED_ShowFrame();
 
   SHTC3_Init();
   // SHTC3_Wakeup();
@@ -129,6 +131,7 @@ int main(void)
   // SHTC3_Measure(&temp, &humidity);
   // SHTC3_GetID();
 
+  char strBuf[64] = {0};
   while (1)
   {
     /* USER CODE END WHILE */
@@ -144,6 +147,12 @@ int main(void)
     // SHTC3_Sleep();
     double temp = 0, humidity = 0;
     SHTC3_Measure(&temp, &humidity);
+    snprintf(strBuf, sizeof(strBuf), "temp: %.2f", temp);
+    OLED_NewFrame();
+    OLED_ShowString(0, 0, strBuf);
+    snprintf(strBuf, sizeof(strBuf), "humidity: %.2f", humidity);
+    OLED_ShowString(0, 16, strBuf);
+    OLED_ShowFrame();
 
     HAL_Delay(500);
   }

@@ -15,6 +15,8 @@ int SHTC3_Wakeup(void);
 int SHTC3_Sleep(void);
 
 int SHTC3_Measure(double *temperature, double *humidity);
+double SHTC3_GetTemp(uint16_t raw);
+double SHTC3_GetHumidity(uint16_t raw);
 
 uint8_t SHTC3_GetID(void);
 

@@ -30,6 +30,7 @@ target_sources(userlib INTERFACE
     ../../User/Src/my_i2c.c
     ../../User/Src/delay.c
     ../../User/Src/shtc3.c
+    ../../User/Src/crc.c
 )
 
 target_link_directories(userlib INTERFACE

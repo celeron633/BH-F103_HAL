@@ -1,4 +1,5 @@
 #include "shtc3.h"
+#include "crc.h"
 
 #include <stdio.h>
 
@@ -129,11 +130,45 @@ int SHTC3_Measure(double *temperature, double *humidity)
         printf("0x%02X ", shtc3Result[i]);
     }
     printf("\r\n");
-    *temperature = 0;
-    *humidity = 0;
+
+    uint8_t tempCrc = crc8(&shtc3Result[0], 2);
+    if (tempCrc == shtc3Result[2]) {
+        printf("temperature CRC ok!\r\n");
+        uint16_t rawValue = ((uint16_t)shtc3Result[0] << 8) | shtc3Result[1];
+        *temperature = SHTC3_GetTemp(rawValue);
+    } else {
+        printf("temperature CRC is bad! expected: [%x], actual: [%x]\r\n", tempCrc, shtc3Result[2]);
+        *temperature = 0.0;
+    }
+
+    uint8_t humiCrc = crc8(&shtc3Result[3], 2);
+    if (humiCrc == shtc3Result[5]) {
+        printf("humidity CRC ok!\r\n");
+        uint16_t rawValue = ((uint16_t)shtc3Result[3] << 8) | shtc3Result[4];
+        *humidity = SHTC3_GetHumidity(rawValue);
+    } else {
+        printf("humidity CRC is bad! expected: [%x], actual: [%x]\r\n", humiCrc, shtc3Result[5]);
+        *humidity = 0.0;
+    }
+
+    printf("temp: [%.2f], humidity: [%.2f]\r\n", *temperature, *humidity);
 
     // 6. let sensor go sleep
     SHTC3_Sleep();
 
     return 0;
+}
+
+double SHTC3_GetTemp(uint16_t raw)
+{
+    double result = 0.0;
+    result = -45 + (175 * ((double)raw / (1 << 16)));
+    return result;
+}
+
+double SHTC3_GetHumidity(uint16_t raw)
+{
+    double result = 0.0;
+    result = 100 * ((double)raw / (1 << 16));
+    return result;
 }
