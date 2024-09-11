@@ -101,17 +101,32 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  __HAL_RCC_GPIOF_CLK_ENABLE();
+
+  GPIO_InitTypeDef ledGpio;
+  ledGpio.Mode = GPIO_MODE_OUTPUT_OD;
+  ledGpio.Pin = GPIO_PIN_6 | GPIO_PIN_7;
+  ledGpio.Pull = GPIO_NOPULL;
+  ledGpio.Speed = GPIO_SPEED_FREQ_HIGH;
+  HAL_GPIO_Init(GPIOF, &ledGpio);
+
   while (1)
   {
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-    GPIOB->ODR = LED_R;
-    HAL_Delay(500);
-    GPIOB->ODR = LED_G;
-    HAL_Delay(500);
-    GPIOB->ODR = LED_B;
-    HAL_Delay(500);
+
+    HAL_GPIO_TogglePin(GPIOF, GPIO_PIN_6);
+    HAL_Delay(100);
+    HAL_GPIO_TogglePin(GPIOF, GPIO_PIN_7);
+    HAL_Delay(100);
+
+    // GPIOB->ODR = LED_R;
+    // HAL_Delay(500);
+    // GPIOB->ODR = LED_G;
+    // HAL_Delay(500);
+    // GPIOB->ODR = LED_B;
+    // HAL_Delay(500);
   }
   /* USER CODE END 3 */
 }

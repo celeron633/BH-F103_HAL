@@ -28,6 +28,7 @@
 
 #include <stdio.h>
 #include "oled.h"
+#include "dht11.h"
 
 /* USER CODE END Includes */
 
@@ -123,6 +124,14 @@ int main(void)
   OLED_NewFrame();
   OLED_ShowString(0, 0, "DHT11:");
   OLED_ShowFrame();
+
+  DHT11_Init();
+  int nRet = DHT11_Start();
+  if (nRet == -1) {
+    printf("dht11 start failed!\r\n");
+  } else {
+    printf("dht11 start success!\r\n");
+  }
 
   while (1)
   {
