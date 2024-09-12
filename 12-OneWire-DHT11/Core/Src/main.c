@@ -126,12 +126,14 @@ int main(void)
   OLED_ShowFrame();
 
   DHT11_Init();
-  int nRet = DHT11_Start();
-  if (nRet == -1) {
-    printf("dht11 start failed!\r\n");
+
+  double temperature = 0, humidity = 0;
+  if (DHT11_Measure(&temperature, &humidity) < 0) {
+    printf("dht11 measure FAILED!\r\n");
   } else {
-    printf("dht11 start success!\r\n");
+    printf("temp: [%.2f], humi: [%.2f]\r\n", temperature, humidity);
   }
+  
 
   while (1)
   {

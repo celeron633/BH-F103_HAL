@@ -14,7 +14,6 @@
 #define DIO_READ()                  HAL_GPIO_ReadPin(DHT11_GPIO, DHT11_DIO_PIN)
 
 void    DHT11_Init(void);
-int     DHT11_Start(void);
-int     DHT11_ReadData(uint8_t *data);
+int     DHT11_Measure(double *temperature, double *humidity);
 
 #endif
