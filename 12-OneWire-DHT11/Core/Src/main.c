@@ -128,23 +128,25 @@ int main(void)
   DHT11_Init();
 
   double temperature = 0, humidity = 0;
-  if (DHT11_Measure(&temperature, &humidity) < 0) {
-    printf("dht11 measure FAILED!\r\n");
-  } else {
-    printf("temp: [%.2f], humi: [%.2f]\r\n", temperature, humidity);
-  }
-  
 
   while (1)
   {
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-    GPIOB->ODR = LED_R;
-    HAL_Delay(500);
-    GPIOB->ODR = LED_G;
-    HAL_Delay(500);
-    GPIOB->ODR = LED_B;
+      if (DHT11_Measure(&temperature, &humidity) < 0) {
+        printf("dht11 measure FAILED!\r\n");
+      } else {
+        char buf[16] = {0};
+        printf("temp: [%.2f], humi: [%.2f]\r\n", temperature, humidity);
+        OLED_NewFrame();
+        OLED_ShowString(0, 0, "DHT11:");
+        snprintf(buf, sizeof(buf), "TEMP: %.2f", temperature);
+        OLED_ShowString(0, 16, buf);
+        snprintf(buf, sizeof(buf), "HUMI: %.2f", humidity);
+        OLED_ShowString(0, 32, buf);
+        OLED_ShowFrame();
+      }
   }
   /* USER CODE END 3 */
 }
