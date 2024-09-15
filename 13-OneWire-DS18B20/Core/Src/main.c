@@ -29,6 +29,7 @@
 #include <stdio.h>
 #include "oled.h"
 #include "dht11.h"
+#include "ds18b20.h"
 
 /* USER CODE END Includes */
 
@@ -122,31 +123,19 @@ int main(void)
   __HAL_RCC_GPIOB_CLK_ENABLE();
   // OLED_Test();
   OLED_NewFrame();
-  OLED_ShowString(0, 0, "DHT11:");
+  OLED_ShowString(0, 0, "DS18B20:");
   OLED_ShowFrame();
 
-  DHT11_Init();
-
-  double temperature = 0, humidity = 0;
+  DS18B20_Init();
+  double temperature = 0;
+  DS18B20_ReadTemperature(&temperature);
 
   while (1)
   {
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-      if (DHT11_Measure(&temperature, &humidity) < 0) {
-        printf("dht11 measure FAILED!\r\n");
-      } else {
-        char buf[16] = {0};
-        printf("temp: [%.2f], humi: [%.2f]\r\n", temperature, humidity);
-        OLED_NewFrame();
-        OLED_ShowString(0, 0, "DHT11:");
-        snprintf(buf, sizeof(buf), "TEMP: %.2f", temperature);
-        OLED_ShowString(0, 16, buf);
-        snprintf(buf, sizeof(buf), "HUMI: %.2f", humidity);
-        OLED_ShowString(0, 32, buf);
-        OLED_ShowFrame();
-      }
+      
   }
   /* USER CODE END 3 */
 }
