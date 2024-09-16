@@ -28,6 +28,7 @@
 
 #include <stdio.h>
 #include "oled.h"
+#include "dht22.h"
 
 /* USER CODE END Includes */
 
@@ -121,8 +122,13 @@ int main(void)
   __HAL_RCC_GPIOB_CLK_ENABLE();
   // OLED_Test();
   OLED_NewFrame();
-  OLED_ShowString(0, 0, "DHT22:");
+  OLED_ShowString(0, 0, "DHT22 Loading...");
   OLED_ShowFrame();
+
+  double humi = 0, temp = 0;
+  char buf[16] = {0};
+  DHT22_Init();
+  uint32_t measureCount = 0;
 
   while (1)
   {
@@ -130,7 +136,23 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
     HAL_GPIO_TogglePin(GPIOB, LED_G_Pin);
-    HAL_Delay(1000);
+    OLED_NewFrame();
+
+    if (DHT22_Measure(&temp, &humi) < 0) {
+      printf("DHT22_Measure FAILED!\r\n");
+      OLED_ShowString(0, 0, "SENSOR FAILED!!");
+    } else {
+      snprintf(buf, sizeof(buf), "SENSOR OK");
+      OLED_ShowString(0, 0, buf);
+      snprintf(buf, sizeof(buf), "TEMP: %.2f", temp);
+      OLED_ShowString(0, 16, buf);
+      snprintf(buf, sizeof(buf), "HUMI: %.2f", humi);
+      OLED_ShowString(0, 32, buf);
+      snprintf(buf, sizeof(buf), "COUNT: [%ld]", measureCount);
+      OLED_ShowString(0, 48, buf);
+    }
+    measureCount++;
+    OLED_ShowFrame();
   }
   /* USER CODE END 3 */
 }
