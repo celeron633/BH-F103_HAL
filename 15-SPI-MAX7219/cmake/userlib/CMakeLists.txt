@@ -32,6 +32,7 @@ target_sources(userlib INTERFACE
     ../../User/Src/dht11.c
     ../../User/Src/ds18b20.c
     ../../User/Src/dht22.c
+    ../../User/Src/max7219.c
 )
 
 target_link_directories(userlib INTERFACE

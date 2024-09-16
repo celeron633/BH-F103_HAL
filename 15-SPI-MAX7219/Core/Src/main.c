@@ -29,6 +29,7 @@
 
 #include <stdio.h>
 #include "oled.h"
+#include "max7219.h"
 
 /* USER CODE END Includes */
 
@@ -113,6 +114,17 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   __HAL_RCC_GPIOB_CLK_ENABLE();
+
+  MAX7219_Begin();
+  // MAX7219_DisplayTestStart();
+  MAX7219_DisplayChar(1, '1', 0);
+  MAX7219_DisplayChar(2, '2', 0);
+  MAX7219_DisplayChar(3, '3', 0);
+  MAX7219_DisplayChar(4, '4', 0);
+  MAX7219_DisplayChar(5, '5', 1);
+  MAX7219_DisplayChar(6, '6', 1);
+  MAX7219_DisplayChar(7, '7', 1);
+  MAX7219_DisplayChar(8, '8', 1);
 
   while (1)
   {
