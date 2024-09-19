@@ -117,14 +117,16 @@ int main(void)
 
   MAX7219_Begin();
   // MAX7219_DisplayTestStart();
-  MAX7219_DisplayChar(1, '1', 0);
-  MAX7219_DisplayChar(2, '2', 0);
-  MAX7219_DisplayChar(3, '3', 0);
-  MAX7219_DisplayChar(4, '4', 0);
-  MAX7219_DisplayChar(5, '5', 1);
-  MAX7219_DisplayChar(6, '6', 1);
-  MAX7219_DisplayChar(7, '7', 1);
-  MAX7219_DisplayChar(8, '8', 1);
+  // MAX7219_DisplayChar(1, '1', 0);
+  // MAX7219_DisplayChar(2, '2', 0);
+  // MAX7219_DisplayChar(3, '3', 0);
+  // MAX7219_DisplayChar(4, '4', 0);
+  // MAX7219_DisplayChar(5, '5', 1);
+  // MAX7219_DisplayChar(6, '6', 1);
+  // MAX7219_DisplayChar(7, '7', 1);
+  // MAX7219_DisplayChar(8, '8', 1);
+
+  MAX7219_DisplayText("1.2.3.4.", 0);
 
   while (1)
   {

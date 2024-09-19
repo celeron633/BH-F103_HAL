@@ -1,5 +1,7 @@
 #include "max7219.h"
 
+#include <string.h>
+
 extern SPI_HandleTypeDef hspi1;
 
 static void MAX7219_Write(uint8_t opcode, uint8_t data)
@@ -71,6 +73,38 @@ void MAX7219_SetBrightness(uint8_t brightness)
 void MAX7219_DisplayChar(int digit, char value, uint8_t dp)
 {
     MAX7219_Write(digit, MAX7219_LookupCode(value, dp));
+}
+
+void MAX7219_DisplayText(char *text, int justify)
+{
+    (void)justify;
+
+    char trimStr[16] = {0};
+    int  decimal[16] = {0};
+
+    int len = strlen(text);
+    if (len > 16)
+        len = 16;
+    
+    int i = 0, j = 0;
+    for (; i < len; i++) {
+        if (text[i] == '.') {
+            if (j > 1) {
+                decimal[j-1] = 1;
+            } else {
+                decimal[0] = 1;
+            }
+        } else {
+            trimStr[j] = text[i];
+            j++;
+        }
+    }
+
+    if (j > 8)
+        j = 8;
+    for (i = 0; i < j; i++) {
+        MAX7219_DisplayChar(j-i, trimStr[i], decimal[i]);
+    }
 }
 
 void MAX7219_Begin(void)
