@@ -182,6 +182,7 @@ void MAX7219_ShutdownStart(void);
 void MAX7219_Clear(void);
 void MAX7219_DisplayTestStop(void);
 void MAX7219_SetBrightness(uint8_t brightness);
-void MAX7219_DisplayText(char *text, int justify);
+void MAX7219_DisplayText(char *text, int mode);
+int  MAX7219_printf(const char *fmt, ...);
 
 #endif // __MAX7219_H__

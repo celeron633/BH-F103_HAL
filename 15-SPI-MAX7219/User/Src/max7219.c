@@ -1,6 +1,8 @@
 #include "max7219.h"
 
 #include <string.h>
+#include <stdarg.h>
+#include <stdio.h>
 
 extern SPI_HandleTypeDef hspi1;
 
@@ -75,10 +77,8 @@ void MAX7219_DisplayChar(int digit, char value, uint8_t dp)
     MAX7219_Write(digit, MAX7219_LookupCode(value, dp));
 }
 
-void MAX7219_DisplayText(char *text, int justify)
+void MAX7219_DisplayText(char *text, int mode)
 {
-    (void)justify;
-
     char trimStr[16] = {0};
     int  decimal[16] = {0};
 
@@ -102,10 +102,38 @@ void MAX7219_DisplayText(char *text, int justify)
 
     if (j > 8)
         j = 8;
-    for (i = 0; i < j; i++) {
-        MAX7219_DisplayChar(j-i, trimStr[i], decimal[i]);
+    switch (mode) {
+        case 0:
+            for (i = 0; i < j; i++) {
+                MAX7219_DisplayChar(j-i, trimStr[i], decimal[i]);
+            }
+            break;
+        case 1:
+            for (i = 0; i < j; i++) {
+                MAX7219_DisplayChar(8-i, trimStr[i], decimal[i]);
+            }
+            break;
+        default:
+            break;
     }
+    
 }
+
+int MAX7219_printf(const char *fmt, ...)
+{
+    va_list vp;
+    char buf[16] = {0};
+    int fmtLen = 0;
+
+    va_start(vp, fmt);
+    fmtLen = vsnprintf(buf, sizeof(buf), fmt, vp);
+    va_end(vp);
+
+    MAX7219_DisplayText(buf, 0);
+    
+    return fmtLen;
+}
+
 
 void MAX7219_Begin(void)
 {

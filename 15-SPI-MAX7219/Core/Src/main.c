@@ -126,7 +126,8 @@ int main(void)
   // MAX7219_DisplayChar(7, '7', 1);
   // MAX7219_DisplayChar(8, '8', 1);
 
-  MAX7219_DisplayText("1.2.3.4.", 0);
+  // MAX7219_DisplayText("1.2.3.4.", 1);
+  MAX7219_printf("%s", "hello");
 
   while (1)
   {
