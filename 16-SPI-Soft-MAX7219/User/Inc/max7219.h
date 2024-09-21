@@ -4,7 +4,6 @@
 #include <stdint.h>
 #include "main.h"
 #include "stm32f1xx_hal_gpio.h"
-#include "spi.h"
 
 // some sources come from arduino max7219-1.0.0
 // https://www.arduino.cc/reference/en/libraries/max7219/

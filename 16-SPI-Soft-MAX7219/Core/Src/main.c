@@ -57,6 +57,7 @@
 /* USER CODE BEGIN PV */
 extern UART_HandleTypeDef huart1;
 uint32_t ledColorArray[] = {LED_R, LED_G, LED_B};
+int count = 0;
 
 /* USER CODE END PV */
 
@@ -127,15 +128,17 @@ int main(void)
   // MAX7219_DisplayChar(8, '8', 1);
 
   // MAX7219_DisplayText("1.2.3.4.", 1);
-  MAX7219_printf("%s", "hello");
 
   while (1)
   {
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+    
+    MAX7219_printf("%d", count);
     HAL_GPIO_TogglePin(GPIOB, LED_G_Pin);
     HAL_Delay(500);
+    count++;
   }
   /* USER CODE END 3 */
 }

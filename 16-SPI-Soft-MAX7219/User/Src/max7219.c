@@ -4,20 +4,16 @@
 #include <stdarg.h>
 #include <stdio.h>
 
+#include "my_spi.h"
+#include "delay.h"
+
 extern SPI_HandleTypeDef hspi1;
 
 static void MAX7219_Write(uint8_t opcode, uint8_t data)
 {
-    // 拉低CS
-    HAL_GPIO_WritePin(MAX7219_CS_GPIO_Port, MAX7219_CS_Pin, GPIO_PIN_RESET);
-
-    // 写地址
-    HAL_SPI_Transmit(&hspi1, &opcode, 1, HAL_MAX_DELAY);
-    // 写数据
-    HAL_SPI_Transmit(&hspi1, &data, 1, HAL_MAX_DELAY);
-
-    // 拉高CS
-    HAL_GPIO_WritePin(MAX7219_CS_GPIO_Port, MAX7219_CS_Pin, GPIO_PIN_SET);
+    uint16_t w = ((uint16_t)opcode) << 8;
+    w |= data;
+    SPI_WriteWord(w);
 }
 
 static unsigned char MAX7219_LookupCode(char character, unsigned int dp)
