@@ -31,7 +31,6 @@ void SPI_WriteWord(uint16_t word)
         }
 
         HAL_GPIO_WritePin(MAX7219_CLK_GPIO_Port, MAX7219_CLK_Pin, GPIO_PIN_SET);
-        delay_us(1);
         word <<= 1;
         HAL_GPIO_WritePin(MAX7219_CLK_GPIO_Port, MAX7219_CLK_Pin, GPIO_PIN_RESET);
     }
