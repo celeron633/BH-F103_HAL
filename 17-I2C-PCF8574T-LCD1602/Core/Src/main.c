@@ -28,6 +28,7 @@
 
 #include <stdio.h>
 #include "oled.h"
+#include "lcd1602.h"
 
 /* USER CODE END Includes */
 
@@ -105,7 +106,8 @@ int main(void)
 
   // start TIM6 for i2c delay
   HAL_TIM_Base_Start(&htim6);
-
+  LCD_Init();
+  LCD_ShowString("hello");
   /* USER CODE END 2 */
 
   /* Infinite loop */
