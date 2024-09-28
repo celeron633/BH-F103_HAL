@@ -53,10 +53,15 @@ void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOB, LED_G_Pin|LED_B_Pin|LED_R_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOB, LCD1602_RW_Pin|LCD1602_EN_Pin|LCD1602_RS_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOG, LCD1602_D4_Pin|LCD1602_D5_Pin|LCD1602_D6_Pin|LCD1602_D7_Pin, GPIO_PIN_RESET);
 
-  /*Configure GPIO pins : PBPin PBPin PBPin */
-  GPIO_InitStruct.Pin = LED_G_Pin|LED_B_Pin|LED_R_Pin;
+  /*Configure GPIO pins : PBPin PBPin PBPin PBPin
+                           PBPin PBPin */
+  GPIO_InitStruct.Pin = LED_G_Pin|LED_B_Pin|LCD1602_RW_Pin|LCD1602_EN_Pin
+                          |LED_R_Pin|LCD1602_RS_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;

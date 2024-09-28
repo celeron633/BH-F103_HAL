@@ -61,6 +61,10 @@ void Error_Handler(void);
 #define LED_G_GPIO_Port GPIOB
 #define LED_B_Pin GPIO_PIN_1
 #define LED_B_GPIO_Port GPIOB
+#define LCD1602_RW_Pin GPIO_PIN_10
+#define LCD1602_RW_GPIO_Port GPIOB
+#define LCD1602_EN_Pin GPIO_PIN_11
+#define LCD1602_EN_GPIO_Port GPIOB
 #define LCD1602_D4_Pin GPIO_PIN_4
 #define LCD1602_D4_GPIO_Port GPIOG
 #define LCD1602_D5_Pin GPIO_PIN_5
@@ -71,6 +75,8 @@ void Error_Handler(void);
 #define LCD1602_D7_GPIO_Port GPIOG
 #define LED_R_Pin GPIO_PIN_5
 #define LED_R_GPIO_Port GPIOB
+#define LCD1602_RS_Pin GPIO_PIN_9
+#define LCD1602_RS_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
 
