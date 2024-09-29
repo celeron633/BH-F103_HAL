@@ -27,7 +27,6 @@
 /* USER CODE BEGIN Includes */
 
 #include <stdio.h>
-#include "oled.h"
 #include "lcd1602.h"
 
 /* USER CODE END Includes */
@@ -44,18 +43,12 @@
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
 
-// R: PB5, G: PB0, B: PB1
-#define LED_R 0xFFFFFFDF
-#define LED_G 0xFFFFFFFE
-#define LED_B 0xFFFFFFFD
-
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
 extern UART_HandleTypeDef huart1;
-uint32_t ledColorArray[] = {LED_R, LED_G, LED_B};
 
 /* USER CODE END PV */
 
@@ -119,7 +112,7 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-    HAL_GPIO_TogglePin(GPIOB, LED_G_Pin);
+    
     HAL_Delay(500);
   }
   /* USER CODE END 3 */
