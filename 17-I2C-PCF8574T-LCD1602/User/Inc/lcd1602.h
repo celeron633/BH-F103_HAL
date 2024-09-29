@@ -12,4 +12,7 @@ void LCD_Clear();
 void LCD_SetCursor(int row, int col);
 void LCD_ShowString(const char *str);
 
+void LCD_BackLightOff(void);
+void LCD_BackLightOn(void);
+
 #endif

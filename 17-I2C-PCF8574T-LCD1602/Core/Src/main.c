@@ -100,7 +100,12 @@ int main(void)
   // start TIM6 for i2c delay
   HAL_TIM_Base_Start(&htim6);
   LCD_Init();
-  LCD_ShowString("hello");
+  LCD_ShowString("123");
+
+  LCD_BackLightOff();
+  HAL_Delay(3000);
+  LCD_BackLightOn();
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
