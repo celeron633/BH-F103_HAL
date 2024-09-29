@@ -1,50 +1,85 @@
 #include "lcd1602.h"
 #include "main.h"
 
+#define DATA_GPIO_Port GPIOA
+
+static inline void LCD_RS_L()
+{
+    HAL_GPIO_WritePin(LCD1602_RS_GPIO_Port, LCD1602_RS_Pin, GPIO_PIN_RESET);
+}
+
+static inline void LCD_RS_H()
+{
+    HAL_GPIO_WritePin(LCD1602_RS_GPIO_Port, LCD1602_RS_Pin, GPIO_PIN_SET);
+}
+
+static inline void LCD_RW_L()
+{
+    HAL_GPIO_WritePin(LCD1602_RW_GPIO_Port, LCD1602_RW_Pin, GPIO_PIN_RESET);
+}
+
+static inline void LCD_RW_H()
+{
+    HAL_GPIO_WritePin(LCD1602_RW_GPIO_Port, LCD1602_RW_Pin, GPIO_PIN_SET);
+}
+
+static inline void LCD_EN_L()
+{
+    HAL_GPIO_WritePin(LCD1602_EN_GPIO_Port, LCD1602_EN_Pin, GPIO_PIN_RESET);
+}
+
+static inline void LCD_EN_H()
+{
+    HAL_GPIO_WritePin(LCD1602_EN_GPIO_Port, LCD1602_EN_Pin, GPIO_PIN_SET);
+}
+
+static inline void LCD_W_Data(uint8_t d)
+{
+    // 直接写输出数据寄存器操作bit4-bit7
+    DATA_GPIO_Port->ODR = d;
+}
+
+static int LCD_GetBusyStatus()
+{
+    LCD_RS_L();
+    LCD_RW_H();
+    int status = HAL_GPIO_ReadPin(DATA_GPIO_Port, GPIO_PIN_7);
+    LCD_EN_H();
+    LCD_EN_L();
+
+    return status;
+}
+
 void LCD_SendCmd(uint8_t cmd)
 {
-    uint8_t buffer[4] = {0};
-    // cmd拆成两部分
-    uint8_t cmdH = cmd & 0xF0;
-    uint8_t cmdL = (cmd << 4) & 0xF0;
-
-    // 先传高位部分, 再传低位部分
-    buffer[0] = cmdH | 0x0C;    // en=1, rs=0
-    buffer[1] = cmdH | 0x08;    // en=0, rs=0
-    buffer[2] = cmdL | 0x0C;    // en=1, rs=0
-    buffer[3] = cmdL | 0x08;    // en=0, rs=0
-
-    // HAL_I2C_Master_Transmit(&hi2c2, PCF8574_ADDR, (uint8_t *)buffer, 4, HAL_MAX_DELAY);
-    HAL_Delay(1);
+    LCD_RS_L();
+    LCD_RW_L();
+    LCD_W_Data(cmd);
+    LCD_EN_H();
+    LCD_EN_L();
+    HAL_Delay(10);
 }
 
 void LCD_SendData(uint8_t data)
 {
-    uint8_t buffer[4] = {0};
-    // cmd拆成两部分
-    uint8_t cmdH = data & 0xF0;
-    uint8_t cmdL = (data << 4) & 0xF0;
-
-    // 先传高位部分, 再传低位部分
-    buffer[0] = cmdH | 0x0D;    // en=1, rs=1
-    buffer[1] = cmdH | 0x09;    // en=0, rs=1
-    buffer[2] = cmdL | 0x0D;    // en=1, rs=1
-    buffer[3] = cmdL | 0x09;    // en=0, rs=1
-
-    // HAL_I2C_Master_Transmit(&hi2c2, PCF8574_ADDR, (uint8_t *)buffer, 4, HAL_MAX_DELAY);
+    while (LCD_GetBusyStatus() == 1)
+    {
+        
+    }
+    LCD_RS_H();
+    LCD_RW_L();
+    LCD_W_Data(data);
+    LCD_EN_H();
+    LCD_EN_L();
     HAL_Delay(1);
 }
 
 void LCD_Init()
 {
-    LCD_SendCmd(0x02);
-    LCD_SendCmd(0x33);
-    LCD_SendCmd(0x32);
-    LCD_SendCmd(0x28);
+    LCD_SendCmd(0x38);
+    LCD_SendCmd(0x0F);
     LCD_SendCmd(0x06);
-    LCD_SendCmd(0x0C);
-    // LCD_SendCmd(0x01);
-    LCD_SendCmd(0x80);
+    LCD_SendCmd(0x01);
 }
 
 void LCD_ShowString(const char *str)
@@ -53,5 +88,4 @@ void LCD_ShowString(const char *str)
     {
         LCD_SendData(*str++);
     }
-    HAL_Delay(1);
 }

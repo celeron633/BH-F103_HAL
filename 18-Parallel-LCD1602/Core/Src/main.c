@@ -104,7 +104,7 @@ int main(void)
   // start TIM6 for i2c delay
   HAL_TIM_Base_Start(&htim6);
   LCD_Init();
-  LCD_ShowString("hello");
+  LCD_ShowString("hello world");
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -116,7 +116,7 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-    HAL_GPIO_TogglePin(GPIOB, LED_G_Pin);
+
     HAL_Delay(500);
   }
   /* USER CODE END 3 */
