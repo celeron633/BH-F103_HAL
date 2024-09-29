@@ -3,7 +3,7 @@
 #include "delay.h"
 
 #define DATA_GPIO_Port GPIOA
-#define DATA_4BIT_MODE
+#define DATA_8BIT_MODE
 
 #define RS_Pin GPIO_PIN_9
 #define RS_GPIO_Port GPIOB
@@ -11,6 +11,15 @@
 #define RW_GPIO_Port GPIOB
 #define EN_Pin GPIO_PIN_11
 #define EN_GPIO_Port GPIOB
+
+#define D0_Pin GPIO_PIN_0
+#define D0_GPIO_Port GPIOA
+#define D1_Pin GPIO_PIN_1
+#define D1_GPIO_Port GPIOA
+#define D2_Pin GPIO_PIN_2
+#define D2_GPIO_Port GPIOA
+#define D3_Pin GPIO_PIN_3
+#define D3_GPIO_Port GPIOA
 #define D4_Pin GPIO_PIN_4
 #define D4_GPIO_Port GPIOA
 #define D5_Pin GPIO_PIN_5
@@ -25,39 +34,61 @@
 
 static inline void LCD_RS_L()
 {
-    HAL_GPIO_WritePin(LCD1602_RS_GPIO_Port, LCD1602_RS_Pin, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(RS_GPIO_Port, RS_Pin, GPIO_PIN_RESET);
 }
 
 static inline void LCD_RS_H()
 {
-    HAL_GPIO_WritePin(LCD1602_RS_GPIO_Port, LCD1602_RS_Pin, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(RS_GPIO_Port, RS_Pin, GPIO_PIN_SET);
 }
 
 static inline void LCD_RW_L()
 {
-    HAL_GPIO_WritePin(LCD1602_RW_GPIO_Port, LCD1602_RW_Pin, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(RW_GPIO_Port, RW_Pin, GPIO_PIN_RESET);
 }
 
 static inline void LCD_RW_H()
 {
-    HAL_GPIO_WritePin(LCD1602_RW_GPIO_Port, LCD1602_RW_Pin, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(RW_GPIO_Port, RW_Pin, GPIO_PIN_SET);
 }
 
 static inline void LCD_EN_L()
 {
-    HAL_GPIO_WritePin(LCD1602_EN_GPIO_Port, LCD1602_EN_Pin, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(EN_GPIO_Port, EN_Pin, GPIO_PIN_RESET);
 }
 
 static inline void LCD_EN_H()
 {
-    HAL_GPIO_WritePin(LCD1602_EN_GPIO_Port, LCD1602_EN_Pin, GPIO_PIN_SET);
+    HAL_GPIO_WritePin(EN_GPIO_Port, EN_Pin, GPIO_PIN_SET);
 }
 
 #ifdef DATA_8BIT_MODE
+// 直接写输出数据寄存器操作bit0-bit7
 static inline void LCD_W_Data(uint8_t d)
 {
-    // 直接写输出数据寄存器操作bit4-bit7
     DATA_GPIO_Port->ODR = d;
+}
+
+// 按bit写
+void LCD_Send(uint8_t data, int rs)
+{
+    HAL_GPIO_WritePin(RS_GPIO_Port, RS_Pin, rs);
+
+    // write bit to pin
+    HAL_GPIO_WritePin(D7_GPIO_Port, D7_Pin, (data>>7)&0x01);
+    HAL_GPIO_WritePin(D6_GPIO_Port, D6_Pin, (data>>6)&0x01);
+    HAL_GPIO_WritePin(D5_GPIO_Port, D5_Pin, (data>>5)&0x01);
+    HAL_GPIO_WritePin(D4_GPIO_Port, D4_Pin, (data>>4)&0x01);
+    HAL_GPIO_WritePin(D7_GPIO_Port, D3_Pin, (data>>3)&0x01);
+    HAL_GPIO_WritePin(D6_GPIO_Port, D2_Pin, (data>>2)&0x01);
+    HAL_GPIO_WritePin(D5_GPIO_Port, D1_Pin, (data>>1)&0x01);
+    HAL_GPIO_WritePin(D4_GPIO_Port, D0_Pin, (data>>0)&0x01);
+
+    // flush to memory while en falling edge
+    HAL_GPIO_WritePin(EN_GPIO_Port, EN_Pin, 1);
+    delay(20);
+    HAL_GPIO_WritePin(EN_GPIO_Port, EN_Pin, 0);
+    delay(20);
 }
 
 static int LCD_GetBusyStatus()
@@ -73,23 +104,12 @@ static int LCD_GetBusyStatus()
 
 void LCD_SendCmd(uint8_t cmd)
 {
-    LCD_RS_L();
-    LCD_RW_L();
-    LCD_W_Data(cmd);
-    LCD_EN_H();
-    delay(20);
-    LCD_EN_L();
+    LCD_Send(cmd, 0);
 }
 
 void LCD_SendData(uint8_t data)
 {
-    // while (LCD_GetBusyStatus() == 1);
-    LCD_RS_H();
-    LCD_RW_L();
-    LCD_W_Data(data);
-    LCD_EN_H();
-    delay(20);
-    LCD_EN_L();
+    LCD_Send(data, 1);
 }
 #else
 void LCD_Send(uint8_t data, int rs)
@@ -134,11 +154,15 @@ void LCD_Init()
 {
 #ifdef DATA_8BIT_MODE
     // 8-bit
-    // LCD_delay();
+    HAL_Delay(50);
     LCD_SendCmd(0x38);
+    HAL_Delay(1);
     LCD_SendCmd(0x01);
+    HAL_Delay(1);
     LCD_SendCmd(0x06);
+    HAL_Delay(1);
     LCD_SendCmd(0x0F);
+    HAL_Delay(1);
 #else
     // 4-bit
     // init 4-bit mode
