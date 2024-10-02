@@ -3,7 +3,7 @@
 #include "delay.h"
 
 #define DATA_GPIO_Port GPIOA
-#define DATA_8BIT_MODE
+#define DATA_4BIT_MODE
 
 #define RS_Pin GPIO_PIN_9
 #define RS_GPIO_Port GPIOB
@@ -190,8 +190,17 @@ void LCD_Init()
 #endif
 }
 
+void LCD_Clear()
+{
+    LCD_SendCmd(0x01);
+    HAL_Delay(1);
+    LCD_SendCmd(0x80);
+    HAL_Delay(1);
+}
+
 void LCD_ShowString(const char *str)
 {
+    LCD_Clear();
     while (*str)
         LCD_SendData(*str++);
 }
