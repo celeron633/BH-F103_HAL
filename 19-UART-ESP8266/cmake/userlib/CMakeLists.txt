@@ -31,6 +31,7 @@ target_sources(userlib INTERFACE
     ../../User/Src/ds18b20.c
     ../../User/Src/dht22.c
     ../../User/Src/lcd1602.c
+    ../../User/Src/esp8266.c
 )
 
 target_link_directories(userlib INTERFACE

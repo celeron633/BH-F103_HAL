@@ -26,6 +26,8 @@
 /* USER CODE BEGIN Includes */
 
 #include <stdio.h>
+#include <string.h>
+#include "esp8266.h"
 
 /* USER CODE END Includes */
 
@@ -52,6 +54,8 @@
 
 /* USER CODE BEGIN PV */
 extern UART_HandleTypeDef huart1;
+extern UART_HandleTypeDef huart3;
+extern char atBuffer[512];
 uint32_t ledColorArray[] = {LED_R, LED_G, LED_B};
 
 /* USER CODE END PV */
@@ -109,9 +113,26 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
+  // __HAL_UART_CLEAR_OREFLAG(&huart3);
+  // int callRet = HAL_UARTEx_ReceiveToIdle_IT(&huart3, (uint8_t *)atBuffer, sizeof(atBuffer));
+  // printf("ret: [%d]\r\n", callRet);
+
+  ESP8266_Init();
+
+  uint16_t rxLen = 0;
+  char buffer[64] = {0};
+  strcpy(buffer, "AT\r\n");
+
   while (1)
   {
     /* USER CODE END WHILE */
+    HAL_Delay(2000);
+    HAL_UART_Transmit(&huart3, (uint8_t *)buffer, strlen(buffer), HAL_MAX_DELAY);
+    HAL_UARTEx_ReceiveToIdle(&huart3, (uint8_t *)atBuffer, sizeof(atBuffer), &rxLen, HAL_MAX_DELAY);
+    printf("rxLen: [%d]\r\n", rxLen);
+    if (strstr(atBuffer, "OK") != NULL) {
+      printf("AT command OK!\r\n");
+    }
 
     /* USER CODE BEGIN 3 */
 
