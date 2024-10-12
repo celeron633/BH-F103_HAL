@@ -3,7 +3,14 @@
 
 #include "main.h"
 
-int ESP8266_Init();
 void ESP8266_Reset();
+void ESP8266_Init();
+int ESP8266_CheckAT();
+int ESP8266_EnterStationMode();
+void ESP8266_ScanWIFI();
+int ESP8266_ConnectWIFI();
+void ESP8266_GetWIFIStatus();
+void ESP8266_GetIPStatus();
+
 
 #endif

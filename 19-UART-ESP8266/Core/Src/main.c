@@ -58,6 +58,8 @@ extern UART_HandleTypeDef huart3;
 extern char atBuffer[512];
 uint32_t ledColorArray[] = {LED_R, LED_G, LED_B};
 
+extern int wifiConnected;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -114,25 +116,28 @@ int main(void)
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   // __HAL_UART_CLEAR_OREFLAG(&huart3);
-  // int callRet = HAL_UARTEx_ReceiveToIdle_IT(&huart3, (uint8_t *)atBuffer, sizeof(atBuffer));
-  // printf("ret: [%d]\r\n", callRet);
 
   ESP8266_Init();
-
-  uint16_t rxLen = 0;
-  char buffer[64] = {0};
-  strcpy(buffer, "AT\r\n");
+  if (ESP8266_CheckAT() < 0) {
+    printf("AT failed! check module!\r\n");
+  } else {
+    ESP8266_EnterStationMode();
+    ESP8266_ScanWIFI();
+    if (ESP8266_ConnectWIFI() < 0) {
+      printf("connect WIFI failed! check password && ssid!\r\n");
+    } else {
+      ESP8266_GetWIFIStatus();
+      ESP8266_GetIPStatus();
+      // TODO: check ip && sta mac status
+      wifiConnected = 1;
+    }
+  }
 
   while (1)
   {
     /* USER CODE END WHILE */
     HAL_Delay(2000);
-    HAL_UART_Transmit(&huart3, (uint8_t *)buffer, strlen(buffer), HAL_MAX_DELAY);
-    HAL_UARTEx_ReceiveToIdle(&huart3, (uint8_t *)atBuffer, sizeof(atBuffer), &rxLen, HAL_MAX_DELAY);
-    printf("rxLen: [%d]\r\n", rxLen);
-    if (strstr(atBuffer, "OK") != NULL) {
-      printf("AT command OK!\r\n");
-    }
+    
 
     /* USER CODE BEGIN 3 */
 
