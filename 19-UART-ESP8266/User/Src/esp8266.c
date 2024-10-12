@@ -32,6 +32,30 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
     }
 }
 
+static int peekAddr(const char* str, char *out)
+{
+	char *ptr = strstr(str, "STAIP,");
+	int j = 0;
+	if (ptr != NULL) {
+		// 跳过STAIP,
+		ptr += 6;
+		while (*ptr)
+		{
+			if (*ptr != '\"' && *ptr != '\r') {
+				out[j++] = *ptr;
+			}
+			if (*ptr == '\r') {
+				break;
+			}
+			ptr++;
+		}
+		out[j] = '\0';
+	} else {
+        return -1;
+    }
+    return 0;
+}
+
 void ESP8266_Reset()
 {
     // 复位ESP8266
@@ -135,6 +159,13 @@ void ESP8266_GetIPStatus()
 {
     uint16_t rxLen = 0;
 
+    char ipAddr[24] = {0};
     rxLen = ESP8266_SendATCommand("AT+CIFSR\r\n", 0);
     printf("AT+CIFSR len: [%d], buf: [%s]\r\n", rxLen, atBuffer);
+
+    if (peekAddr(atBuffer, ipAddr) >= 0) {
+        printf("IP ADDRESS: [%s]\r\n", ipAddr);
+    } else {
+        printf("Get IP address FAILED!\r\n");
+    }
 }
