@@ -5,11 +5,11 @@
 #include <string.h>
 
 // status
-int wifiConnected = 0;
+// TODO: add string check for AT return
+int wifiConnected   = 0;
+int tcpEstablished  = 0;
 
 extern UART_HandleTypeDef huart3;
-
-
 
 // AT command uart receive buffer
 char atBuffer[512] = {0};
@@ -50,16 +50,27 @@ void ESP8266_Init()
     HAL_Delay(500);
 }
 
+uint16_t ESP8266_SendATCommand(const char *command, int needDelay)
+{
+    char buffer[64] = {0};
+    uint16_t rxLength = 0;
+
+    strncpy(buffer, command, sizeof(buffer));
+    HAL_UART_Transmit(&huart3, (uint8_t *)buffer, strlen(buffer), HAL_MAX_DELAY);
+    memset(atBuffer, 0x00, sizeof(atBuffer));
+    if (needDelay) {
+        HAL_Delay(100);
+    }
+    HAL_UARTEx_ReceiveToIdle(&huart3, (uint8_t *)atBuffer, sizeof(atBuffer), &rxLength, HAL_MAX_DELAY);
+
+    return rxLength;
+}
+
 int ESP8266_CheckAT()
 {
     uint16_t rxLen = 0;
-    char buffer[16] = {0};
 
-    strncpy(buffer, "AT\r\n", sizeof(buffer));
-    HAL_UART_Transmit(&huart3, (uint8_t *)buffer, strlen(buffer), HAL_MAX_DELAY);
-    memset(atBuffer, 0x00, sizeof(atBuffer));
-    HAL_UARTEx_ReceiveToIdle(&huart3, (uint8_t *)atBuffer, sizeof(atBuffer), &rxLen, HAL_MAX_DELAY);
-
+    rxLen = ESP8266_SendATCommand("AT\r\n", 0);
     printf("AT len: [%d], buf: [%s]\r\n", rxLen, atBuffer);\
     if (strstr(atBuffer, "OK") != NULL) {
         printf("AT command OK!\r\n");
@@ -75,14 +86,9 @@ int ESP8266_CheckAT()
 int ESP8266_EnterStationMode()
 {
     uint16_t rxLen = 0;
-    char buffer[32] = {0};
 
-    strncpy(buffer, "AT+CWMODE=1\r\n", sizeof(buffer));
-    HAL_UART_Transmit(&huart3, (uint8_t *)buffer, strlen(buffer), HAL_MAX_DELAY);
-    memset(atBuffer, 0x00, sizeof(atBuffer));
-    HAL_UARTEx_ReceiveToIdle(&huart3, (uint8_t *)atBuffer, sizeof(atBuffer), &rxLen, HAL_MAX_DELAY);
-
-    printf("CWMODE len: [%d], buf: [%s]\r\n", rxLen, atBuffer);
+    rxLen = ESP8266_SendATCommand("AT+CWMODE=1\r\n", 0);
+    printf("AT+CWMODE len: [%d], buf: [%s]\r\n", rxLen, atBuffer);
     if (strstr(atBuffer, "OK") != NULL) {
         printf("AT+CWMODE command OK!\r\n");
         return 0;
@@ -96,29 +102,17 @@ int ESP8266_EnterStationMode()
 void ESP8266_ScanWIFI()
 {
     uint16_t rxLen = 0;
-    char buffer[32] = {0};
 
-    strncpy(buffer, "AT+CWLAP\r\n", sizeof(buffer));
-    HAL_UART_Transmit(&huart3, (uint8_t *)buffer, strlen(buffer), HAL_MAX_DELAY);
-    HAL_Delay(100);
-    memset(atBuffer, 0x00, sizeof(atBuffer));
-    HAL_UARTEx_ReceiveToIdle(&huart3, (uint8_t *)atBuffer, sizeof(atBuffer), &rxLen, HAL_MAX_DELAY);
-
-    printf("CWLAP len: [%d], buf: [%s]\r\n", rxLen, atBuffer);
+    rxLen = ESP8266_SendATCommand("AT+CWLAP\r\n", 1);
+    printf("AT+CWLAP len: [%d], buf: [%s]\r\n", rxLen, atBuffer);
 }
 
 int ESP8266_ConnectWIFI()
 {
     uint16_t rxLen = 0;
-    char buffer[64] = {0};
 
-    strncpy(buffer, "AT+CWJAP=\"TestAP\",\"abcd1234\"\r\n", sizeof(buffer));
-    HAL_UART_Transmit(&huart3, (uint8_t *)buffer, strlen(buffer), HAL_MAX_DELAY);
-    HAL_Delay(100);
-    memset(atBuffer, 0x00, sizeof(atBuffer));
-    HAL_UARTEx_ReceiveToIdle(&huart3, (uint8_t *)atBuffer, sizeof(atBuffer), &rxLen, HAL_MAX_DELAY);
-
-    printf("CWJAP len: [%d], buf: [%s]\r\n", rxLen, atBuffer);
+    rxLen = ESP8266_SendATCommand("AT+CWJAP=\"TestAP\",\"abcd1234\"\r\n", 1);
+    printf("AT+CWJAP len: [%d], buf: [%s]\r\n", rxLen, atBuffer);
     if (strstr(atBuffer, "OK") != NULL) {
         printf("AT+CWJAP command OK!\r\n");
         return 0;
@@ -132,26 +126,15 @@ int ESP8266_ConnectWIFI()
 void ESP8266_GetWIFIStatus()
 {
     uint16_t rxLen = 0;
-    char buffer[32] = {0};
 
-    strncpy(buffer, "AT+CIPSTATUS\r\n", sizeof(buffer));
-    HAL_UART_Transmit(&huart3, (uint8_t *)buffer, strlen(buffer), HAL_MAX_DELAY);
-    memset(atBuffer, 0x00, sizeof(atBuffer));
-    HAL_UARTEx_ReceiveToIdle(&huart3, (uint8_t *)atBuffer, sizeof(atBuffer), &rxLen, HAL_MAX_DELAY);
-
-    printf("CIPSTATUS len: [%d], buf: [%s]\r\n", rxLen, atBuffer);
+    rxLen = ESP8266_SendATCommand("AT+CIPSTATUS\r\n", 0);
+    printf("AT+CIPSTATUS len: [%d], buf: [%s]\r\n", rxLen, atBuffer);
 }
 
 void ESP8266_GetIPStatus()
 {
     uint16_t rxLen = 0;
-    char buffer[32] = {0};
 
-    strncpy(buffer, "AT+CIFSR\r\n", sizeof(buffer));
-    HAL_UART_Transmit(&huart3, (uint8_t *)buffer, strlen(buffer), HAL_MAX_DELAY);
-    memset(atBuffer, 0x00, sizeof(atBuffer));
-    // 这种Transmit了要马上接收, 不然消息早就已经没有了, 再idle收会卡住
-    HAL_UARTEx_ReceiveToIdle(&huart3, (uint8_t *)atBuffer, sizeof(atBuffer), &rxLen, HAL_MAX_DELAY);
-
-    printf("CIFSR len: [%d], buf: [%s]\r\n", rxLen, atBuffer);
+    rxLen = ESP8266_SendATCommand("AT+CIFSR\r\n", 0);
+    printf("AT+CIFSR len: [%d], buf: [%s]\r\n", rxLen, atBuffer);
 }

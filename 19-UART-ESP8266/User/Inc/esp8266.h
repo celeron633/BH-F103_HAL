@@ -3,6 +3,8 @@
 
 #include "main.h"
 
+uint16_t ESP8266_SendATCommand(const char *command, int needDelay);
+
 void ESP8266_Reset();
 void ESP8266_Init();
 int ESP8266_CheckAT();
