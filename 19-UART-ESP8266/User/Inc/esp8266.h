@@ -12,7 +12,8 @@ int ESP8266_EnterStationMode();
 void ESP8266_ScanWIFI();
 int ESP8266_ConnectWIFI();
 void ESP8266_GetWIFIStatus();
-void ESP8266_GetIPStatus();
-
+int ESP8266_GetIPStatus();
+int ESP8266_TCPConnect(const char *ip, uint16_t port);
+int ESP8266_CheckTCPStatus(void);
 
 #endif

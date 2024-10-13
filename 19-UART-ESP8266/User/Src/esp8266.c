@@ -56,6 +56,32 @@ static int peekAddr(const char* str, char *out)
     return 0;
 }
 
+static int checkTcpStatus(const char *buf)
+{
+    char buf2[4] = {0};
+    char *ptr = strstr(buf, "STATUS:");
+    if (ptr == NULL) {
+        return -1;
+    } else {
+        int j = 0;
+        ptr += 7;
+        while (*ptr != '\r' && *ptr != '\0')
+        {
+            buf2[j++] = *ptr;
+            ptr++;
+        }
+        buf2[j] = '\0';
+        int tcpStat = atoi(buf2);
+        printf("tcpStat: %d\r\n", tcpStat);
+        if (tcpStat == 3) {
+            return 0;
+        } else {
+            return -1;
+        }
+    }
+    return -1;
+}
+
 void ESP8266_Reset()
 {
     // 复位ESP8266
@@ -155,7 +181,7 @@ void ESP8266_GetWIFIStatus()
     printf("AT+CIPSTATUS len: [%d], buf: [%s]\r\n", rxLen, atBuffer);
 }
 
-void ESP8266_GetIPStatus()
+int ESP8266_GetIPStatus()
 {
     uint16_t rxLen = 0;
 
@@ -165,7 +191,39 @@ void ESP8266_GetIPStatus()
 
     if (peekAddr(atBuffer, ipAddr) >= 0) {
         printf("IP ADDRESS: [%s]\r\n", ipAddr);
+        return 0;
     } else {
         printf("Get IP address FAILED!\r\n");
+        return -1;
     }
+
+    return -1;
+}
+
+int ESP8266_TCPConnect(const char *ip, uint16_t port)
+{
+    uint16_t rxLen = 0;
+
+    char atCommand[64] = {0};
+    snprintf(atCommand, sizeof(atCommand), "AT+CIPSTART=\"TCP\",\"%s\",%d\r\n", ip, port);
+    printf("AT cmd: [%s]\r\n", atCommand);
+
+    rxLen = ESP8266_SendATCommand(atCommand, 0);
+    printf("AT+CIPSTART len: [%d], buf: [%s]\r\n", rxLen, atBuffer);
+
+    return 0;
+}
+
+int ESP8266_CheckTCPStatus(void)
+{
+    uint16_t rxLen = 0;
+    rxLen = ESP8266_SendATCommand("AT+CIPSTATUS\r\n", 0);
+    printf("AT+CIPSTATUS len: [%d], buf: [%s]\r\n", rxLen, atBuffer);
+    if (checkTcpStatus(atBuffer) < 0) {
+        printf("tcp not established!\r\n");
+        return -1;
+    } else {
+        printf("tcp establisehd!\r\n");
+    }
+    return 0;
 }

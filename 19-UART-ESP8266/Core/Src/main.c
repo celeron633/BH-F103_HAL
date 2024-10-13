@@ -59,6 +59,7 @@ extern char atBuffer[512];
 uint32_t ledColorArray[] = {LED_R, LED_G, LED_B};
 
 extern int wifiConnected;
+extern int tcpEstablished;
 
 /* USER CODE END PV */
 
@@ -70,7 +71,76 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+int InitWIFI()
+{
+  ESP8266_Init();
+  int retryCount = 0;
 
+  // AT检查模块
+  if (ESP8266_CheckAT() < 0) {
+    printf("AT failed! check module!\r\n");
+    return -1;
+  }
+  // 切换为STA模式
+  if (ESP8266_EnterStationMode() < 0) {
+    printf("Enter STA mode failed! check module!\r\n");
+    return -1;
+  }
+  // 尝试连接WIFI
+  while (1) {
+    if (ESP8266_ConnectWIFI() < 0) {
+      printf("connect WIFI failed! retrying...\r\n");
+      HAL_Delay(500);
+      retryCount++;
+      if (retryCount >= 3) {
+        printf("connect WIFI failed! give up now!\r\n");
+        return -1;
+      }
+    } else {
+      printf("connect to wifi success!\r\n");
+      wifiConnected = 1;
+      break;
+    }
+  }
+  retryCount = 0;
+  // 等待获取IP
+  while (1)
+  {
+    if (ESP8266_GetIPStatus() < 0) {
+      printf("Get IP failed! retrying...\r\n");
+      HAL_Delay(500);
+      retryCount++;
+      if (retryCount >= 3) {
+        printf("Get IP failed! give up now!\r\n");
+        return -1;
+      }
+    } else {
+      printf("Get IP success!\r\n");
+      break;
+    }
+  }
+  retryCount = 0;
+  
+  // 尝试TCP连接
+  while (1)
+  {
+    ESP8266_TCPConnect("192.168.31.102", 9090);
+    if (ESP8266_CheckTCPStatus() < 0) {
+      printf("connect to tcp server failed! retrying...\r\n");
+      HAL_Delay(500);
+      retryCount++;
+      if (retryCount >= 3) {
+        printf("Connect to tcp server failed! give up now!\r\n");
+        return -1;
+      }
+    } else {
+      printf("connect to tcp server success!\r\n");
+      break;
+    }
+  }
+
+  return 0;
+}
 /* USER CODE END 0 */
 
 /**
@@ -115,22 +185,10 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
-  // __HAL_UART_CLEAR_OREFLAG(&huart3);
-
-  ESP8266_Init();
-  if (ESP8266_CheckAT() < 0) {
-    printf("AT failed! check module!\r\n");
+  if (InitWIFI() < 0) {
+    printf("InitWIFI FAILED!\r\n");
   } else {
-    ESP8266_EnterStationMode();
-    ESP8266_ScanWIFI();
-    if (ESP8266_ConnectWIFI() < 0) {
-      printf("connect WIFI failed! check password && ssid!\r\n");
-    } else {
-      ESP8266_GetWIFIStatus();
-      ESP8266_GetIPStatus();
-      // TODO: check ip && sta mac status
-      wifiConnected = 1;
-    }
+    printf("InitWIFI success!\r\n");
   }
 
   while (1)
