@@ -28,6 +28,7 @@
 
 #include <stdio.h>
 #include "lcd1602.h"
+#include "keyboard.h"
 
 /* USER CODE END Includes */
 
@@ -49,6 +50,7 @@
 
 /* USER CODE BEGIN PV */
 extern UART_HandleTypeDef huart1;
+int lastKey = -1;
 
 /* USER CODE END PV */
 
@@ -99,8 +101,9 @@ int main(void)
 
   // start TIM6 for i2c delay
   HAL_TIM_Base_Start(&htim6);
-  LCD_Init();
-  LCD_ShowString("Hello 1602!");
+  // LCD_Init();
+  // LCD_ShowString("Hello 1602!");
+  KBD_Init();
 
   // LCD_BackLightOff();
   // HAL_Delay(3000);
@@ -117,8 +120,12 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+    int tmpKey = KBD_Scan();
+    if (tmpKey != lastKey && tmpKey != -1) {
+      lastKey = tmpKey;
+      printf("last key: [%d]\r\n", lastKey);
+    }
     
-    HAL_Delay(500);
   }
   /* USER CODE END 3 */
 }

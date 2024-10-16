@@ -33,6 +33,7 @@ target_sources(userlib INTERFACE
     ../../User/Src/ds18b20.c
     ../../User/Src/dht22.c
     ../../User/Src/lcd1602.c
+    ../../user/Src/keyboard.c
 )
 
 target_link_directories(userlib INTERFACE
