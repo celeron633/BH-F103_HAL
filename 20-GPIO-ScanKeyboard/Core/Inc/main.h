@@ -58,13 +58,13 @@ void Error_Handler(void);
 
 /* Private defines -----------------------------------------------------------*/
 #define KBD_R1_Pin GPIO_PIN_0
-#define KBD_R1_GPIO_Port GPIOC
+#define KBD_R1_GPIO_Port GPIOF
 #define KBD_R2_Pin GPIO_PIN_1
-#define KBD_R2_GPIO_Port GPIOC
+#define KBD_R2_GPIO_Port GPIOF
 #define KBD_R3_Pin GPIO_PIN_2
-#define KBD_R3_GPIO_Port GPIOC
+#define KBD_R3_GPIO_Port GPIOF
 #define KBD_R4_Pin GPIO_PIN_3
-#define KBD_R4_GPIO_Port GPIOC
+#define KBD_R4_GPIO_Port GPIOF
 #define KBD_C1_Pin GPIO_PIN_0
 #define KBD_C1_GPIO_Port GPIOD
 #define KBD_C2_Pin GPIO_PIN_1

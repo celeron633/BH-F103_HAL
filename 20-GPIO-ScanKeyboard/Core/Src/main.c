@@ -120,10 +120,10 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-    int tmpKey = KBD_Scan();
-    if (tmpKey != lastKey && tmpKey != -1) {
-      lastKey = tmpKey;
+    int lastKey = KBD_Scan();
+    if (lastKey != -1) {
       printf("last key: [%d]\r\n", lastKey);
+      HAL_Delay(100);
     }
     
   }
